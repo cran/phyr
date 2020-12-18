@@ -338,7 +338,7 @@ extends in the obvious way to more than two variates.
 # Vphy <- Vphy/max(Vphy)
 # Vphy <- Vphy/exp(determinant(Vphy)$modulus[1]/n)
 # 
-# tau <- matrix(1, nrow = n, ncol = 1) %*% diag(Vphy) - Vphy
+# tau <- matrix(1, nrow = n, ncol = 1) \%*\% diag(Vphy) - Vphy
 # C <- matrix(0, nrow = p * n, ncol = p * n)
 # for (i in 1:p) for (j in 1:p) {
 #   Cd <- (d[i]^tau * (d[j]^t(tau)) * (1 - (d[i] * d[j])^Vphy))/(1 - d[i] * d[j])
@@ -369,7 +369,7 @@ extends in the obvious way to more than two variates.
 # set.seed(2)
 # for (rep in 1:Nrep) {
 # 
-#   XX <- iD %*% rnorm(2 * n)
+#   XX <- iD \%*\% rnorm(2 * n)
 #   X <- matrix(XX, n, p)
 #   colnames(X) <- trt_names
 # 

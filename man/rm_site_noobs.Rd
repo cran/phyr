@@ -2,12 +2,14 @@
 % Please edit documentation in R/utils.R
 \name{rm_site_noobs}
 \alias{rm_site_noobs}
-\title{Remove site that has no observations of any species.}
+\title{Remove site that has no observations of any species}
 \usage{
-rm_site_noobs(df)
+rm_site_noobs(df, warn = FALSE)
 }
 \arguments{
 \item{df}{A data frame in wide form, i.e. site by species data frame, with site names as row name.}
+
+\item{warn}{Whether to warn when any site has no species? Default is \code{FALSE}.}
 }
 \value{
 A site by species data frame.

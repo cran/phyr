@@ -1,16 +1,17 @@
 #' Phylogenetic Generalized Linear Mixed Model for Comparative Data
 #' 
-#' `pglmm.compare` performs linear regression for Gaussian, binomial and Poisson
+#' `pglmm_compare` performs linear regression for Gaussian, binomial and Poisson
 #' phylogenetic data, estimating regression coefficients with approximate standard 
 #' errors. It simultaneously estimates the strength of phylogenetic signal in the
 #' residuals and gives an approximate conditional likelihood ratio test for the
 #' hypothesis that there is no signal. Therefore, when applied without
 #' predictor (independent) variables, it gives a test for phylogenetic signal. 
-#' `pglmm.compare` is a wrapper for `pglmm` tailored for comparative data in
+#' `pglmm_compare` is a wrapper for `pglmm` tailored for comparative data in
 #' which each value of the response (dependent) variable corresponds to a single tip
-#' on a phylogenetic tree.
+#' on a phylogenetic tree. If there are multiple measures for each species, `pglmm`
+#' will be helpful.
 #' 
-#' `pglmm.compare` in the package `phyr` is similar to `binaryPGLMM` in 
+#' `pglmm_compare` in the package `phyr` is similar to `binaryPGLMM` in 
 #' the package `ape`, although it has much broader functionality, including
 #' accepting more than just binary data, implementing Bayesian analyses, etc.
 #' 
@@ -47,7 +48,9 @@
 #'   presence/absence, or a two-column array of 'successes' and 'failures'. 
 #'   For both binomial and Poisson data, we add an observation-level 
 #'   random term by default via \code{add.obs.re = TRUE}. 
-#' @param data A data frame containing the variables named in formula.
+#' @param data A data frame containing the variables named in formula. It must has
+#' the tip labels of the phylogeny as row names; if they are not in the same order,
+#' the data frame will be arranged so that row names match the order of tip labels.
 #' @param family Either "gaussian" for a Linear Mixed Model, or 
 #'   "binomial" or "poisson" for Generalized Linear Mixed Models.
 #'   \code{family} should be specified as a character string (i.e., quoted). For binomial and 
@@ -130,7 +133,7 @@
 #'   the bayesian model fit? Sometimes this can be helpful, but most of the
 #'   time it may not help; thus, we set the default to \code{FALSE}. Also, it
 #'   does not work with the zero-inflated families.
-#' @return An object (list) of class \code{pglmm.compare} with the following elements:
+#' @return An object (list) of class \code{pglmm_compare} with the following elements:
 #' \item{formula}{the formula for fixed effects}
 #' \item{formula_original}{the formula for both fixed effects and random effects}
 #' \item{data}{the dataset}
@@ -195,11 +198,11 @@
 #' Evolutionary Biology}. Springer-Verlag, Berlin Heidelberg.
 #' 
 #' @keywords regression
-#' @rdname pglmm.compare
+#' @rdname pglmm_compare
 #' @export
 #' @examples
 #' 
-#' ## Illustration of `pglmm.compare` with simulated data
+#' ## Illustration of `pglmm_compare` with simulated data
 #' 
 #' # Generate random phylogeny
 #' 
@@ -213,28 +216,30 @@
 #' X1 <- (X1 - mean(X1))/var(X1)
 #' 
 #' # Simulate binary Y
-#' sim.dat <- data.frame(Y=array(0, dim=n), X1=X1, row.names=phy$tip.label)
-#' sim.dat$Y <- ape::binaryPGLMM.sim(Y ~ X1, phy=phy, data=sim.dat, s2=1,
-#'                              B=matrix(c(0,.25),nrow=2,ncol=1), nrep=1)$Y
+#' sim.dat <- data.frame(Y = array(0, dim = n), X1 = X1, row.names = phy$tip.label)
+#' sim.dat$Y <- ape::binaryPGLMM.sim(Y ~ X1, phy = phy, data=sim.dat, s2 = 1,
+#'                              B = matrix(c(0, .25), nrow = 2, ncol = 1), 
+#'                              nrep = 1)$Y
 #' 
 #' # Fit model
-#' pglmm.compare(Y ~ X1, family="binomial", phy=phy, data=sim.dat)
+#' pglmm_compare(Y ~ X1, family = "binomial", phy = phy, data = sim.dat)
 #' 
 #' # Compare with `binaryPGLMM`
-#' ape::binaryPGLMM(Y ~ X1, phy=phy, data=sim.dat)
+#' ape::binaryPGLMM(Y ~ X1, phy = phy, data = sim.dat)
 #' 
 #' # Compare with `phyloglm`
-#' summary(phylolm::phyloglm(Y ~ X1, phy=phy, data=sim.dat))
+#' summary(phylolm::phyloglm(Y ~ X1, phy = phy, data = sim.dat))
 #' 
 #' # Compare with `glm` that does not account for phylogeny
-#' summary(glm(Y ~ X1, data=sim.dat, family="binomial"))
+#' summary(glm(Y ~ X1, data = sim.dat, family = "binomial"))
 #' 
 #' # Compare with logistf() that does not account
 #' # for phylogeny but is less biased than glm()
-#' logistf::logistf(Y ~ X1, data=sim.dat)
+#' logistf::logistf(Y ~ X1, data = sim.dat)
 #' 
 #' ## Fit model with bayes = TRUE
-#' # pglmm.compare(Y ~ X1, family="binomial", phy=phy, data=sim.dat, bayes = TRUE, calc.DIC = TRUE)
+#' # pglmm_compare(Y ~ X1, family = "binomial", phy = phy, data = sim.dat, 
+#' #               bayes = TRUE, calc.DIC = TRUE)
 #' 
 #' # Compare with `MCMCglmm`
 #' 
@@ -253,11 +258,11 @@
 #' 
 #' prior <- list(R=list(V=1, fix=1), G=list(G1=list(V=1, nu=1000, alpha.mu=0, alpha.V=1)))
 #' # commented out to save time
-#' # summary(MCMCglmm::MCMCglmm(Y ~ X1, random=~species, ginvers=list(species=invV),
-#' #     data=sim.dat, slice=TRUE, nitt=nitt, thin=thin, burnin=burnin,
-#' #    family="categorical", prior=prior, verbose=FALSE))
+#' # summary(MCMCglmm::MCMCglmm(Y ~ X1, random = ~species, ginvers = list(species = invV),
+#' #     data = sim.dat, slice = TRUE, nitt = nitt, thin = thin, burnin = burnin,
+#' #    family = "categorical", prior = prior, verbose = FALSE))
 #'
-pglmm.compare <- function(formula, family = "gaussian", 
+pglmm_compare <- function(formula, family = "gaussian", 
                           data = list(), 
                           phy, 
                           REML = TRUE, 
@@ -307,7 +312,6 @@ pglmm.compare <- function(formula, family = "gaussian",
                     Y = z$Y, size = z$size, X = z$X, 
                     H = as.matrix(z$H), iV = z$iV, mu = z$mu, nested = z$nested, Zt = z$Zt, St = z$St, 
                     convcode = z$convcode, niter = z$niter)
-    
   }else{
     results <- list(formula = formula, data = data, family = family, phy = phy, vcv.phy = re.1,
                     B = z$B, B.se = z$B.se,
@@ -331,20 +335,20 @@ pglmm.compare <- function(formula, family = "gaussian",
                     iV = NULL, mu = NULL, nested = z$nested, Zt = NULL, St = NULL, 
                     convcode = NULL, niter = NULL, inla.model = z$out)
   }
-  class(results) <- "pglmm.compare"
+  class(results) <- "pglmm_compare"
   results
 }
 
 
 
-#' Summary information of fitted pglmm.compare model
+#' Summary information of fitted pglmm_compare model
 #' 
-#' @method summary pglmm.compare
-#' @param object A fitted model with class pglmm.compare.
+#' @method summary pglmm_compare
+#' @param object A fitted model with class pglmm_compare.
 #' @param digits Minimal number of significant digits for printing, as in \code{\link{print.default}}.
 #' @param ... Additional arguments, currently ignored.
 #' @export
-summary.pglmm.compare <- function(object, digits = max(3, getOption("digits") - 3), ...) {
+summary.pglmm_compare <- function(object, digits = max(3, getOption("digits") - 3), ...) {
   x <- object # summary generic function first argument is object, not x.
   if(is.null(x$bayes)) x$bayes = FALSE # to be compatible with models fitting by pez
   
@@ -445,12 +449,12 @@ summary.pglmm.compare <- function(object, digits = max(3, getOption("digits") - 
 
 #' Print summary information of fitted model
 #' 
-#' @method print pglmm.compare
-#' @param x A fitted pglmm.compare.
+#' @method print pglmm_compare
+#' @param x A fitted pglmm_compare.
 #' @param digits Minimal number of significant digits for printing, as in \code{\link{print.default}}.
 #' @param ... Additional arguments, currently ignored.
 #' @export
-print.pglmm.compare <- function(x, digits = max(3, getOption("digits") - 3), ...) {
-  summary.pglmm.compare(x, digits = digits)
+print.pglmm_compare <- function(x, digits = max(3, getOption("digits") - 3), ...) {
+  summary.pglmm_compare(x, digits = digits)
 }
 

@@ -1,14 +1,14 @@
-## ----setup, include = FALSE----------------------------------------------
+## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "##",
   fig.width = 15, fig.align = 'center', out.width = '100%'
 )
 
-## ----args-pglmm----------------------------------------------------------
-args(phyr::pglmm.plot.re)
+## ----args-pglmm---------------------------------------------------------------
+args(phyr::pglmm_plot_re)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(ape)
 library(phyr)
 suppressPackageStartupMessages(library(dplyr))
@@ -51,77 +51,77 @@ d$Y <- Y.sp + Y.attract + trait * d$env + Y.e
 head(d)
 
 # fit a model
-mod_1 = communityPGLMM(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
-                       data = d, cov_ranef = list(sp = phy))
+mod_1 = pglmm(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
+              data = d, cov_ranef = list(sp = phy))
 summary(mod_1)
 
-## ----fig.asp=0.6---------------------------------------------------------
+## ----fig.asp=0.6--------------------------------------------------------------
 # plot var-cov matrices of random terms
-mod1re = pglmm.plot.re(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
+mod1re = pglmm_plot_re(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
                        data = d, cov_ranef = list(sp = phy), show.image = TRUE, 
                        show.sim.image = FALSE)
 
-## ----fig.asp=0.6---------------------------------------------------------
+## ----fig.asp=0.6--------------------------------------------------------------
 # all use color with useAbs = FALSE
-pglmm.plot.re(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
+pglmm_plot_re(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
               data = d, cov_ranef = list(sp = phy), show.image = TRUE, 
               show.sim.image = FALSE, useAbs = FALSE)
 
-## ----fig.asp=0.6---------------------------------------------------------
+## ----fig.asp=0.6--------------------------------------------------------------
 # suppress key with colorkey = FALSE
-pglmm.plot.re(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
+pglmm_plot_re(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
               data = d, cov_ranef = list(sp = phy), show.image = TRUE, 
               show.sim.image = FALSE, useAbs = FALSE, colorkey = FALSE)
 
-## ----fig.asp=0.6---------------------------------------------------------
+## ----fig.asp=0.6--------------------------------------------------------------
 # suppress colorkey, let the function decide whether use color or not
-pglmm.plot.re(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
+pglmm_plot_re(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
               data = d, cov_ranef = list(sp = phy), show.image = TRUE, 
               show.sim.image = FALSE, colorkey = FALSE)
 
-## ----fig.asp=0.6---------------------------------------------------------
+## ----fig.asp=0.6--------------------------------------------------------------
 # all black and white
-pglmm.plot.re(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
+pglmm_plot_re(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
               data = d, cov_ranef = list(sp = phy), show.image = TRUE, 
               show.sim.image = FALSE, useAbs = TRUE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 names(mod1re)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 names(mod1re$vcv)
 
-## ----fig.height=6, fig.width=6, out.width='50%'--------------------------
+## ----fig.height=6, fig.width=6, out.width='50%'-------------------------------
 names(mod1re$plt_re_list)
 mod1re$plt_re_list[[6]]
 
-## ----fig.height=6, fig.width=6, out.width='50%'--------------------------
+## ----fig.height=6, fig.width=6, out.width='50%'-------------------------------
 Matrix::image(mod1re$vcv[[6]], xlab = "", ylab = "", sub = "", main = "1|sp__@site")
 
-## ----fig.asp=0.4---------------------------------------------------------
+## ----fig.asp=0.4--------------------------------------------------------------
 gridExtra::grid.arrange(grobs = mod1re$plt_re_list[c(2, 5, 6)], nrow = 1)
 
-## ----fig.asp=0.6---------------------------------------------------------
+## ----fig.asp=0.6--------------------------------------------------------------
 # plot simulated matrices of random terms
-mod1sim = pglmm.plot.re(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
+mod1sim = pglmm_plot_re(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
                         data = d, cov_ranef = list(sp = phy), show.image = FALSE, 
                         show.sim.image = TRUE)
 
-## ----fig.asp=0.6---------------------------------------------------------
-pglmm.plot.re(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
+## ----fig.asp=0.6--------------------------------------------------------------
+pglmm_plot_re(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
               data = d, cov_ranef = list(sp = phy), show.image = FALSE, 
               show.sim.image = TRUE, add.tree.sp = FALSE)
 
-## ----fig.asp=0.6---------------------------------------------------------
-pglmm.plot.re(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
+## ----fig.asp=0.6--------------------------------------------------------------
+pglmm_plot_re(Y ~ 1 + env + (1|sp__) + (1|site) + (env|sp__) + (1|sp__@site),
               data = d, cov_ranef = list(sp = phy), show.image = FALSE,
               show.sim.image = TRUE, add.tree.sp = TRUE,
               colorkey = FALSE, useAbs = FALSE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 names(mod1sim)
 
-## ----fig.width = 12, fig.asp=0.6-----------------------------------------
+## ----fig.width = 12, fig.asp=0.6----------------------------------------------
 gridExtra::grid.arrange(grobs = mod1sim$plt_sim_list[c(2, 6)], nrow = 1)
 gridExtra::grid.arrange(grobs = lapply(mod1sim$plt_sim_list[c(2, 6)], 
                                        update, 
@@ -130,8 +130,8 @@ gridExtra::grid.arrange(grobs = lapply(mod1sim$plt_sim_list[c(2, 6)],
                                                                   main = 5))), 
                         nrow = 1)
 
-## ----fig.asp=0.6---------------------------------------------------------
-pglmm.plot.re(x = mod_1, show.image = FALSE, show.sim.image = TRUE, 
+## ----fig.asp=0.6--------------------------------------------------------------
+pglmm_plot_re(x = mod_1, show.image = FALSE, show.sim.image = TRUE, 
               add.tree.sp = TRUE, colorkey = FALSE, useAbs = FALSE)
 communityPGLMM.show.re(x = mod_1, show.image = TRUE, show.sim.image = FALSE, useAbs = TRUE)
 

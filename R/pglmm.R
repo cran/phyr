@@ -7,7 +7,7 @@
 #' in which species occur within multiple sites (locations). 
 #' A Bayesian version of PGLMM uses the package \code{INLA}, 
 #' which is not available on CRAN yet. If you wish to use this option, 
-#' you must first install \code{INLA} from \url{http://www.r-inla.org/} by running
+#' you must first install \code{INLA} from \url{https://www.r-inla.org/} by running
 #' \code{install.packages('INLA', repos='https://www.math.ntnu.no/inla/R/stable')} in R.
 #'  
 #'
@@ -120,7 +120,8 @@
 #'   possible to construct models with both phylogenetic correlation and spatio-temporal autocorrelation.
 #'   In preparing \code{random.effect}, make sure that the orders of rows and columns of 
 #'   covariance matrices in the list are the same as their corresponding group variables
-#'   in the data.
+#'   in the data. Also, this should be _a list of lists_, e.g. 
+#'   `random.effects = list(re1 = list(matrix_a), re2 = list(1, sp = sp, covar = Vsp))`.
 #' @param REML Whether REML or ML is used for model fitting the random effects. Ignored if
 #'  \code{bayes = TRUE}.
 #' @param optimizer nelder-mead-nlopt (default), bobyqa, Nelder-Mead, or subplex. 
@@ -139,7 +140,7 @@
 #'   \code{(1|sp__@site) + (1|sp@site__) + (1|sp__@site__)}, then you should set the 
 #'   repulsion to be something like \code{c(TRUE, FALSE, TRUE, TRUE)} (length of 4). 
 #' @param add.obs.re Whether to add an observation-level random term for binomial or Poisson
-#'   distributions Normally it would be a good idea to add this to account for overdispersion,
+#'   distributions. Normally it would be a good idea to add this to account for overdispersion,
 #'   so \code{add.obs.re = TRUE} by default.
 #' @param verbose If \code{TRUE}, the model deviance and running
 #'   estimates of \code{s2} and \code{B} are plotted each iteration
@@ -180,6 +181,8 @@
 #'   tendency of the Bayesian posterior marginal distributions. Ignored if \code{bayes = FALSE}.
 #' @param calc.DIC Should the Deviance Information Criterion be calculated and returned
 #'   when doing a Bayesian PGLMM? Ignored if \code{bayes = FALSE}.
+#' @param calc.WAIC Should the WAIC be calculated and returned
+#'   when doing a Bayesian PGLMM? Ignored if \code{bayes = FALSE}.
 #' @param prior Which type of default prior should be used by \code{pglmm}?
 #'   Only used if \code{bayes = TRUE}. There are currently four options:
 #'   "inla.default", which uses the default \code{INLA} priors; "pc.prior.auto", which uses a
@@ -217,6 +220,12 @@
 #'   pglmm` will try to standardize it for you. No longer used: keep here for compatibility.
 #' @param sp No longer used: keep here for compatibility.
 #' @param site No longer used: keep here for compatibility.
+#' @param bayes_options Additional options to pass to INLA for if \code{bayes = TRUE}. A named list where the names
+#' correspond to parameters in the \code{inla} function. One special option is \code{diagonal}: if an element in
+#' the options list is names \code{diagonal} this tells \code{INLA} to add its value to the diagonal of the random effects
+#' precision matrices. This can help with numerical stability if the model is ill-conditioned (if you get a lot of warnings,
+#' try setting this to \code{list(diagonal = 1e-4)}).
+#' @param bayes_nested_matrix_as_list For `bayes = TRUE`, prepare the nested terms as a list of length of 4 as the old way?
 #' @return An object (list) of class \code{communityPGLMM} with the following elements:
 #' \item{formula}{the formula for fixed effects}
 #' \item{formula_original}{the formula for both fixed effects and random effects}
@@ -297,32 +306,34 @@
 #' ### Brief summary of models and their use ###
 #' #############################################
 #' ## Model structures from Ives & Helmus (2011)
-#' # dat = data set for regression (note: must have a column "sp" and a column "site")
-#' # phy = phylogeney of class "phylo"
-#' # repulsion = to test phylogenetic repulsion or not
-#'
-#' # Model 1 (Eq. 1)
-#' z <- pglmm(freq ~ sp + (1|site) + (1|sp__@site), data = dat, family = "binomial", 
-#'            cov_ranef = list(sp = phy), REML = TRUE, verbose = TRUE, s2.init = .1)
-#' 
-#' # Model 2 (Eq. 2)
-#' z <- pglmm(freq ~ sp + X + (1|site) + (X|sp__), data = dat, family = "binomial",
-#'            cov_ranef = list(sp = phy), REML = TRUE, verbose = TRUE, s2.init = .1)
-#' 
-#' # Model 3 (Eq. 3)
-#' z <- pglmm(freq ~ sp*X + (1|site) + (1|sp__@site), data = dat, family = "binomial",
-#'            cov_ranef = list(sp = phy), REML = TRUE, verbose = TRUE, s2.init = .1)
-#' 
-#' ## Model structure from Rafferty & Ives (2013) (Eq. 3)
-#' # dat = data set
-#' # phyPol = phylogeny for pollinators (pol)
-#' # phyPlt = phylogeny for plants (plt)
-#' 
-#' z <- pglmm(freq ~ pol * X + (1|pol__) + (1|plt__) + (1|pol__@plt) +
-#'            (1|pol@plt__) + (1|pol__@plt__), 
-#'            data = dat, family = "binomial", 
-#'            cov_ranef = list(pol = phyPol, plt = phyPlt), 
-#'            REML = TRUE, verbose = TRUE, s2.init = .1)
+#' if(FALSE){
+#'   # dat = data set for regression (note: must have a column "sp" and a column "site")
+#'   # phy = phylogeny of class "phylo"
+#'   # repulsion = to test phylogenetic repulsion or not
+#'   
+#'   # Model 1 (Eq. 1)
+#'   z <- pglmm(freq ~ sp + (1|site) + (1|sp__@site), data = dat, family = "binomial",
+#'              cov_ranef = list(sp = phy), REML = TRUE, verbose = TRUE, s2.init = .1)
+#'   
+#'   # Model 2 (Eq. 2)
+#'   z <- pglmm(freq ~ sp + X + (1|site) + (X|sp__), data = dat, family = "binomial",
+#'              cov_ranef = list(sp = phy), REML = TRUE, verbose = TRUE, s2.init = .1)
+#'   
+#'   # Model 3 (Eq. 3)
+#'   z <- pglmm(freq ~ sp*X + (1|site) + (1|sp__@site), data = dat, family = "binomial",
+#'              cov_ranef = list(sp = phy), REML = TRUE, verbose = TRUE, s2.init = .1)
+#'   
+#'   ## Model structure from Rafferty & Ives (2013) (Eq. 3)
+#'   # dat = data set
+#'   # phyPol = phylogeny for pollinators (pol)
+#'   # phyPlt = phylogeny for plants (plt)
+#'   
+#'   z <- pglmm(freq ~ pol * X + (1|pol__) + (1|plt__) + (1|pol__@plt) +
+#'                (1|pol@plt__) + (1|pol__@plt__),
+#'              data = dat, family = "binomial",
+#'              cov_ranef = list(pol = phyPol, plt = phyPlt),
+#'              REML = TRUE, verbose = TRUE, s2.init = .1)
+#' }
 #' 
 #' #####################################################
 #' ### Detailed analysis showing covariance matrices ###
@@ -382,10 +393,10 @@
 #' # Analyze the model
 #' pglmm(Y ~ 1 + (1|sp__) + (1|site) + (1|sp__@site), data = d, cov_ranef = list(sp = phy))
 #' 
-#' # Display random effects: the function `pglmm.plot.re()` does what 
+#' # Display random effects: the function `pglmm_plot_ranef()` does what 
 #' # the name implies. You can set `show.image = TRUE` and `show.sim.image = TRUE` 
 #' # to see the matrices and simulations.
-#' re <- pglmm.plot.re(Y ~ 1 + (1|sp__) + (1|site) + (1|sp__@site), data = d, 
+#' re <- pglmm_plot_ranef(Y ~ 1 + (1|sp__) + (1|site) + (1|sp__@site), data = d, 
 #'                     cov_ranef = list(sp = phy), show.image = FALSE, 
 #'                     show.sim.image = FALSE)
 #' 
@@ -444,10 +455,10 @@
 #' d$Y <- Y.sp + Y.site + Y.sp.attract + Y.site.attract + Y.sp.site.attract + Y.e
 #' 
 #' # Plot random effects covariance matrices and then add phylogenies
-#' # Note that, if show.image and show.sim are not specified, pglmm.plot.re() shows
+#' # Note that, if show.image and show.sim are not specified, pglmm_plot_ranef() shows
 #' # the covariance matrices if nspp * nsite < 200 and shows simulations 
 #' # if nspp * nsite > 100
-#' re <- pglmm.plot.re(Y ~ 1 + (1|sp__) + (1|site__) + (1|sp__@site) + 
+#' re <- pglmm_plot_ranef(Y ~ 1 + (1|sp__) + (1|site__) + (1|sp__@site) + 
 #'                     (1|sp@site__) + (1|sp__@site__),
 #'                     data=d, cov_ranef = list(sp = phy.sp, site = phy.site))
 #' 
@@ -478,7 +489,7 @@
 #'                cov_ranef = list(sp = phy.sp, site = phy.site), 
 #'                s2.init = c(mod.r$ss, 0.01)^2)
 #' mod.f
-#' pvalue <- pchisq(2*(mod.f$logLik - mod.r$logLik), df = 1, lower.tail = F)
+#' pvalue <- pchisq(2*(mod.f$logLik - mod.r$logLik), df = 1, lower.tail = FALSE)
 #' pvalue
 #' } 
 
@@ -489,9 +500,10 @@ pglmm <- function(formula, data = NULL, family = "gaussian", cov_ranef = NULL,
                            cpp = TRUE, bayes = FALSE, 
                            s2.init = NULL, B.init = NULL, reltol = 10^-6, 
                            maxit = 500, tol.pql = 10^-6, maxit.pql = 200,  
-                           marginal.summ = "mean", calc.DIC = FALSE, prior = "inla.default", 
+                           marginal.summ = "mean", calc.DIC = TRUE, calc.WAIC = TRUE, prior = "inla.default", 
                            prior_alpha = 0.1, prior_mu = 1, ML.init = FALSE,
-                           tree = NULL, tree_site = NULL, sp = NULL, site = NULL
+                           tree = NULL, tree_site = NULL, sp = NULL, site = NULL, bayes_options = NULL,
+                  bayes_nested_matrix_as_list = FALSE
                            ) {
 
   optimizer = match.arg(optimizer)
@@ -532,12 +544,31 @@ pglmm <- function(formula, data = NULL, family = "gaussian", cov_ranef = NULL,
       if(is.null(tree) & !is.null(tree_site)) cov_ranef = list(site = tree_site) # column name must be site
       if(!is.null(tree) & !is.null(tree_site)) cov_ranef = list(sp = tree, site = tree_site)
     }
-    dat_prepared = prep_dat_pglmm(formula, data, cov_ranef, repulsion, prep_re, family, add.obs.re)
+    dat_prepared = prep_dat_pglmm(formula, data, cov_ranef, repulsion, prep_re, family, add.obs.re, bayes, bayes_nested_matrix_as_list)
     formula = dat_prepared$formula
     random.effects = dat_prepared$random.effects
     cov_ranef_updated = dat_prepared$cov_ranef_updated
   } else {
     formula = lme4::nobars(formula)
+    for(i in 1:length(random.effects)){
+      if(length(random.effects[[i]]) >= 3){
+        if(inherits(random.effects[[i]][[3]], c("matrix", "Matrix")) &
+           !is.null(rownames(random.effects[[i]][[3]]))){
+          if(!all(rownames(random.effects[[i]][[3]]) == colnames(random.effects[[i]][[3]])))
+            stop("the row and column names of cov matrix in random.effects[", i, "] not in the same order")
+          if(!all(rownames(random.effects[[i]][[3]]) == levels(random.effects[[i]][[2]]))){
+            warning("the row/column names of cov matrix in random.effects[", i, 
+                    "] not in the same order of its grouping variable, reordering now", 
+                    immediate. = TRUE, call. = FALSE)
+            if(length(setdiff(levels(random.effects[[i]][[2]]), rownames(random.effects[[i]][[3]]))))
+              stop("some levels in the grouping variable of random.effects[", i, 
+                   "] not in the cov matrix")
+            random.effects[[i]][[3]] = 
+              random.effects[[i]][[3]][levels(random.effects[[i]][[2]]), levels(random.effects[[i]][[2]])]
+          }
+        }
+      }
+    }
   }
   
   # initial values for bayesian analysis: binomial and gaussian
@@ -586,10 +617,11 @@ pglmm <- function(formula, data = NULL, family = "gaussian", cov_ranef = NULL,
                               random.effects = random.effects, 
                               s2.init = s2.init, B.init = B.init, 
                               verbose = verbose, 
-                              marginal.summ = marginal.summ, calc.DIC = calc.DIC, 
+                              marginal.summ = marginal.summ, calc.DIC = calc.DIC, calc.WAIC = calc.WAIC, 
                               prior = prior, 
                               prior_alpha = prior_alpha, 
-                              prior_mu = prior_mu)
+                              prior_mu = prior_mu,
+                              bayes_options = bayes_options)
   } else {# max likelihood 
     if (family == "gaussian") {
       z <- communityPGLMM.gaussian(formula = formula, data = data, 
@@ -614,15 +646,15 @@ pglmm <- function(formula, data = NULL, family = "gaussian", cov_ranef = NULL,
   z$formula_original = fm_original
   z$cov_ranef = if(is.null(cov_ranef)) NA else cov_ranef_updated
   
-  # add names for ss
-  if(!is.null(names(random.effects))){
-    re.names = names(random.effects)[c(
-      which(sapply(random.effects, length) %nin% c(1, 4)), # non-nested terms
-      which(sapply(random.effects, length) %in% c(1, 4)) # nested terms
-    )]
-    if (family == "gaussian") re.names <- c(re.names, "residual")
-    names(z$ss) = re.names
-  }
+  # # add names for ss
+  # if(!is.null(names(random.effects))){
+  #   re.names = names(random.effects)[c(
+  #     which(sapply(random.effects, length) %nin% c(1, 2, 4)), # non-nested terms
+  #     which(sapply(random.effects, length) %in% c(1, 2, 4)) # nested terms
+  #   )]
+  #   if(family == "gaussian") re.names <- c(re.names, "residual")
+  #   if((!bayes) & family != "gaussian") names(z$ss) = re.names
+  # }
   
   return(z)
 }
@@ -707,6 +739,14 @@ communityPGLMM.gaussian <- function(formula, data = list(), family = "gaussian",
     }
   }
   
+  # add names to variance estimates to make sure they are in order
+  if(!is.null(names(random.effects))){
+    re.len <- sapply(random.effects, length)
+    if(length(out$sr)) names(out$sr) <- names(out$s2r) <- names(random.effects)[re.len == 3]
+    if(length(out$sn)) names(out$sn) <- names(out$s2n) <- names(random.effects)[re.len %in% c(1, 4)]
+    names(out$s2resid) <- "residual"
+  }
+ 
   ss <- c(out$sr, out$sn, out$s2resid^0.5)
   B.zscore <- out$B/out$B.se
   B.pvalue <- 2 * pnorm(abs(B.zscore), lower.tail = FALSE)
@@ -721,7 +761,7 @@ communityPGLMM.gaussian <- function(formula, data = list(), family = "gaussian",
                   REML = REML, bayes = FALSE, s2.init = s2.init, B.init = B.init, Y = Y, X = X, H = out$H, 
                   iV = as.matrix(out$iV), mu = NULL, nested = nested, Zt = Zt, St = St, 
                   convcode = convcode, niter = niter)
-  class(results) <- "communityPGLMM"
+  class(results) <- c("communityPGLMM", "pglmm")
   results
 }
 
@@ -865,6 +905,7 @@ communityPGLMM.glmm <- function(formula, data = list(), family = "binomial",
       est.ss <- ss
       est.B <- B
     }
+    row.names(B) = colnames(X)
   }
   
   # Extract parameters
@@ -879,6 +920,14 @@ communityPGLMM.glmm <- function(formula, data = list(), family = "binomial",
     sn <- ss[(q.nonNested + 1):(q.nonNested + q.Nested)]
   } else {
     sn <- NULL
+  }
+  
+  # add names to variance estimates to make sure they are in order
+  if(!is.null(names(random.effects))){
+    re.len <- sapply(random.effects, length)
+    if(length(sr)) names(sr) <- names(random.effects)[re.len == 3]
+    if(length(sn)) names(sn) <- names(random.effects)[re.len %in% c(1, 4)]
+    names(ss) <- c(names(sr), names(sn))
   }
   
   s2r <- sr^2
@@ -918,7 +967,7 @@ communityPGLMM.glmm <- function(formula, data = list(), family = "binomial",
                   BIC = BIC, REML = REML, bayes = FALSE, s2.init = s2.init, B.init = B.init, Y = Y, size = size, X = X, 
                   H = as.matrix(H), iV = iV, mu = mu, nested = nested, Zt = Zt, St = St, 
                   convcode = convcode, niter = niter)
-  class(results) <- "communityPGLMM"
+  class(results) <- c("communityPGLMM", "pglmm")
   return(results)
 }
 
@@ -926,9 +975,9 @@ communityPGLMM.bayes <- function(formula, data = list(), family = "gaussian",
                                  sp = NULL, site = NULL, random.effects = list(), 
                                  s2.init = NULL, B.init = NULL, 
                                  verbose = FALSE, 
-                                 marginal.summ = "mean", calc.DIC = FALSE, 
+                                 marginal.summ = "mean", calc.DIC = FALSE, calc.WAIC = FALSE, 
                                  prior = "inla.default",
-                                 prior_alpha = 1, prior_mu = 0.1) {
+                                 prior_alpha = 0.1, prior_mu = 1, bayes_options = NULL) {
   mf <- model.frame(formula = formula, data = data, na.action = NULL)
   X <- model.matrix(attr(mf, "terms"), data = mf)
   Y <- model.response(mf)
@@ -941,7 +990,8 @@ communityPGLMM.bayes <- function(formula, data = list(), family = "gaussian",
     Y <- Y[, 1] # success
     # update formula
     left_side = all.vars(update(formula, .~0))[1]
-    formula_bayes = as.formula(gsub(pattern = "^(cbind[(].*[)])", replacement = left_side, x = deparse(formula)))
+    formula_bayes = as.formula(gsub(pattern = "^(cbind[(].*[)])",
+                                    replacement = left_side, x = deparse(formula)))
   } else {
     formula_bayes = formula
     Ntrials = NULL
@@ -1013,7 +1063,7 @@ communityPGLMM.bayes <- function(formula, data = list(), family = "gaussian",
       }
     }
   } 
-    
+  
   if(prior == "pc.prior") {
     pcprior <- list(prec = list(prior = "pc.prec", param = c(prior_mu, prior_alpha)))
   }
@@ -1025,24 +1075,30 @@ communityPGLMM.bayes <- function(formula, data = list(), family = "gaussian",
   
   # contruct INLA formula
   inla_formula <- Reduce(paste, deparse(formula_bayes))
-  inla_effects <- list()
-  inla_Cmat <- list()
-  inla_weights <- list()
-  inla_reps <- list()
+  inla_effects <- vector("list", length = length(random.effects))
+  if(is.null(names(random.effects))){
+    names(inla_effects) <- as.character(1:length(inla_effects))
+  } else { # assign names so that the inla.model has names in random terms
+    names(inla_effects) <- names(random.effects)
+  }
+  inla_Cmat <- inla_weights <- inla_reps <- inla_effects
   
   for(i in seq_along(random.effects)) {
-    if(length(random.effects[[i]]) == 1) { # nested term
+    if(length(random.effects[[i]]) == 1) { 
+      # nested term: 1|sp@site, 1|sp__@site, 1|sp@site__, 1|sp__@site__
       inla_effects[[i]] <- 1:nrow(data)
       inla_Cmat[[i]] <- solve(random.effects[[i]][[1]])
-    } else if(length(random.effects[[i]]) == 2) { # nested term
+    } else if(length(random.effects[[i]]) == 2) { 
+      # nested term: x|sp@site, x|sp__@site, x|sp@site__, x|sp__@site__
       inla_effects[[i]] <- 1:nrow(data)
-      inla_weights[[i]] <- random.effects[[i]][1]
+      inla_weights[[i]] <- random.effects[[i]][[1]]
       inla_Cmat[[i]] <- solve(random.effects[[i]][[2]])
-    } else if(length(random.effects[[i]]) == 3) { # non-nested term
+    } else if(length(random.effects[[i]]) == 3) { 
+      # non-nested term: e.g. 1|sp__, x|sp__
       inla_effects[[i]] <- as.numeric(random.effects[[i]][[2]])
       inla_Cmat[[i]] <- solve(random.effects[[i]][[3]])
       inla_weights[[i]] <- random.effects[[i]][[1]]
-    } else { # nested term
+    } else { # nested term: 1|sp@site, 1|sp__@site, 1|sp@site__, 1|sp__@site__
       inla_effects[[i]] <- as.numeric(random.effects[[i]][[2]])
       inla_Cmat[[i]] <- solve(random.effects[[i]][[3]])
       inla_weights[[i]] <- random.effects[[i]][[1]]
@@ -1050,26 +1106,40 @@ communityPGLMM.bayes <- function(formula, data = list(), family = "gaussian",
     }
   }
   
+  if(!is.null(bayes_options$diagonal)) {
+    diagonal <- bayes_options$diagonal
+    bayes_options <- bayes_options[-which(names(bayes_options) == "diagonal")]
+    if(length(bayes_options) == 0) {
+      bayes_options <- NULL
+    }
+  } else {
+    diagonal <- NULL
+  }
+  
   f_form = vector(mode = "character", length = length(random.effects))
   for(i in seq_along(random.effects)) {
     if(length(random.effects[[i]]) == 3) { # non-nested term
-      if(length(random.effects[[i]][[1]]) == 1) {
-        f_form[i] <- paste0("f(inla_effects[[", i, "]], model = 'generic0', constr = TRUE, Cmatrix = inla_Cmat[[", i, "]], initial = s2.init[", i, "])")
-      } else {
-        f_form[i] <- paste0("f(inla_effects[[", i, "]], inla_weights[[", i, "]], model = 'generic0', constr = TRUE, Cmatrix = inla_Cmat[[", i, "]], initial = s2.init[", i, "])")
+      if(length(random.effects[[i]][[1]]) == 1) { # 1 | sp, 1 | sp__, 1 | site, 1 | site__
+        f_form[i] <- paste0("f(inla_effects[['", names(inla_effects)[i], "']], model = 'generic0', constr = TRUE, Cmatrix = inla_Cmat[[", i, "]], initial = s2.init[", i, "], diagonal = diagonal)")
+      } else {  # x | sp, x | sp__, x | site, x | site__
+        f_form[i] <- paste0("f(inla_effects[['", names(inla_effects)[i], "']], inla_weights[[", i, "]], model = 'generic0', constr = TRUE, Cmatrix = inla_Cmat[[", i, "]], initial = s2.init[", i, "], diagonal = diagonal)")
       }
-    } else { # nested term
+    } else { # nested term 1 | sp__@site, etc.
       if(length(random.effects[[i]]) == 4) { 
         if(length(random.effects[[i]][[1]]) == 1) {
-          f_form[i] <- paste0("f(inla_effects[[", i, "]], model = 'generic0', constr = TRUE, Cmatrix = inla_Cmat[[", i, "]], replicate = inla_reps[[", i, "]], initial = s2.init[", i, "])")
+          f_form[i] <- paste0("f(inla_effects[['", names(inla_effects)[i], "']], model = 'generic0', constr = TRUE, Cmatrix = inla_Cmat[[", i, "]], replicate = inla_reps[[", i, "]], initial = s2.init[", i, "], diagonal = diagonal)")
         } else {
-          f_form[i] <- paste0("f(inla_effects[[", i, "]], inla_weights[[", i, "]], model = 'generic0', constr = TRUE, Cmatrix = inla_Cmat[[", i, "]], replicate = inla_reps[[", i, "]], initial = s2.init[", i, "])")
+          f_form[i] <- paste0("f(inla_effects[['", names(inla_effects)[i], "']], model = 'generic0', constr = TRUE, Cmatrix = inla_Cmat[[", i, "]], replicate = inla_reps[[", i, "]], initial = s2.init[", i, "], diagonal = diagonal)")
         }
-      } else {
-        if(length(random.effects[[i]]) == 1) {
-          f_form[i] <- paste0("f(inla_effects[[", i, "]], model = 'generic0', constr = TRUE, Cmatrix = inla_Cmat[[", i, "]], initial = s2.init[", i, "])")
+      } else { # length of 1 or 2: specified as a matrix (1|sp__@site) or list of 2 (x|sp__@site)
+        if(length(random.effects[[i]]) == 1) { # (1|sp__@site) etc.
+          f_form[i] <- paste0("f(inla_effects[['", names(inla_effects)[i], "']], model = 'generic0', constr = TRUE, Cmatrix = inla_Cmat[[", i, "]], initial = s2.init[", i, "], diagonal = diagonal)")
         } else {
-          f_form[i] <- paste0("f(inla_effects[[", i, "]], inla_weights[[", i, "]], model = 'generic0', constr = TRUE, Cmatrix = inla_Cmat[[", i, "]], initial = s2.init[", i, "])")
+          if(length(random.effects[[i]]) == 2) { # (x|sp__@site) etc.
+            f_form[i] <- paste0("f(inla_effects[['", names(inla_effects)[i], "']], inla_weights[[", i, "]], model = 'generic0', constr = TRUE, Cmatrix = inla_Cmat[[", i, "]], initial = s2.init[", i, "], diagonal = diagonal)")
+          } else { # other lengths? just in case ...
+            f_form[i] <- paste0("f(inla_effects[['", names(inla_effects)[i], "']], model = 'generic0', constr = TRUE, Cmatrix = inla_Cmat[[", i, "]], initial = s2.init[", i, "], diagonal = diagonal)")
+          }
         }
       }
     }
@@ -1085,27 +1155,85 @@ communityPGLMM.bayes <- function(formula, data = list(), family = "gaussian",
   inla_formula <- paste(inla_formula, f_form, sep = " + ")
   
   if(calc.DIC) {
-    control.compute <- list(dic = TRUE)
+    if(calc.WAIC) {
+      control.compute <- list(dic = TRUE, waic = TRUE)
+    } else {
+      control.compute <- list(dic = TRUE)
+    }
   } else {
-    control.compute <- list()
+    if(calc.WAIC) {
+      control.compute <- list(waic = TRUE)
+    } else {
+      control.compute <- list()
+    }
   }
+  
+  argus <- c(list(formula = as.formula(inla_formula),
+                  data = data,
+                  verbose = verbose,
+                  family = family), 
+             bayes_options)
+  if(is.null(argus$control.fixed)) {
+    argus$control.fixed = list(prec.intercept = 0.0001, correlation.matrix = TRUE)
+  } else {
+    if(is.null(argus$control.fixed$prec.intercept)) {
+      argus$control.fixed$prec.intercept <- 0.0001
+    }
+    if(is.null(argus$control.fixed$correlation.matrix)) {
+      argus$control.fixed$correlation.matrix <- TRUE
+    }
+  }
+  
+  if(is.null(argus$control.compute$dic)) {
+    argus$control.compute$dic <- calc.DIC
+  }
+  if(is.null(argus$control.compute$waic)) {
+    argus$control.compute$waic <- calc.WAIC
+  }
+  if(is.null(argus$control.compute$config)) {
+    argus$control.compute$config <- TRUE
+  }
+  
+  if(is.null(argus$control.predictor)) {
+    argus$control.predictor = list(compute = TRUE, link = 1)
+  } else {
+    if(is.null(argus$control.predictor$compute)) {
+      argus$control.predictor$compute <- TRUE
+    }
+    if(is.null(argus$control.predictor$link)) {
+      argus$control.predictor$link <- 1
+    }
+  }
+  
   if(family == "gaussian") {
-      out <- INLA::inla(as.formula(inla_formula), data = data,
-                        verbose = verbose,
-                        control.family = list(hyper = list(prec = list(initial = resid.init))),
-                        control.fixed = list(prec.intercept = 0.0001, correlation.matrix = TRUE),
-                        control.compute = control.compute,
-                        control.predictor = list(compute = TRUE))
-   
-  } else { # other families
-      out <- INLA::inla(as.formula(inla_formula), data = data,
-                        verbose = verbose,
-                        family = family,
-                        control.fixed = list(prec.intercept = 0.0001, correlation.matrix = TRUE),
-                        control.compute = control.compute,
-                        control.predictor=list(compute = TRUE),
-                        Ntrials = Ntrials)
+    if(is.null(argus$control.family)) {
+      argus$control.family = list(hyper = list(prec = list(initial = resid.init)))
+    } else {
+      if(is.null(argus$control.family$hyper)) {
+        argus$control.family$hyper <- list(prec = list(initial = resid.init))
+      }
+    }    
+    
+    # out <- INLA::inla(as.formula(inla_formula), data = data,
+    #                   verbose = verbose,
+    #                   control.family = list(hyper = list(prec = list(initial = resid.init))),
+    #                   control.fixed = list(prec.intercept = 0.0001, correlation.matrix = TRUE),
+    #                   control.compute = control.compute,
+    #                   control.predictor = list(compute = TRUE))
+    
+  } else {
+    argus$Ntrials <- Ntrials
   }
+  
+  out <- do.call(INLA::inla, argus)
+  
+  # out <- INLA::inla(as.formula(inla_formula), data = data,
+  #                       verbose = verbose,
+  #                       family = family,
+  #                       control.fixed = list(prec.intercept = 0.0001, correlation.matrix = TRUE),
+  #                       control.compute = control.compute,
+  #                       control.predictor=list(compute = TRUE),
+  #                       Ntrials = Ntrials)
   #summary(out)
   #print(out$summary.fitted.values)
   
@@ -1115,15 +1243,23 @@ communityPGLMM.bayes <- function(formula, data = list(), family = "gaussian",
     DIC <- NULL
   }
   
+  if(calc.WAIC){
+    WAIC <- out$waic$waic
+  } else {
+    WAIC <- NULL
+  }
+  
   if(marginal.summ == "median") marginal.summ <- "0.5quant"
   
   nested <- sapply(random.effects, length) %in% c(1, 2, 4)
   
   variances <- 1/out$summary.hyperpar[ , marginal.summ]
+  # names(variances) <- gsub("Precision for ", "", rownames(out$summary.hyperpar))
   variances.ci <- 1/out$summary.hyperpar[ , c("0.975quant", "0.025quant")]
   
   if(family == "gaussian") {
     resid_var <- variances[1]
+    names(resid_var) <- "residual"
     variances <- variances[-1]
     resid_var.ci <- variances.ci[1, ]
     variances.ci <- variances.ci[-1, ]
@@ -1142,12 +1278,19 @@ communityPGLMM.bayes <- function(formula, data = list(), family = "gaussian",
     zeroinflated_param.ci <- NULL
   }
   
-  ss <- c(variances[!nested]^0.5, variances[nested]^0.5, resid_var^0.5)
+  if(!is.null(names(random.effects))){
+    names(variances) <- names(random.effects)
+    row.names(variances.ci) <- paste("Precision for", names(random.effects))
+  }
+ 
+  std.vars <- variances^0.5
+  ss <- c(std.vars[!nested], std.vars[nested], resid_var)
   
   if(marginal.summ == "median") marginal.summ <- "0.5quant"
   
   B <- out$summary.fixed[ , marginal.summ]
   H <- Y - out$summary.fitted.values[ , marginal.summ, drop = TRUE]
+  mu <- out$summary.fitted.values[ , marginal.summ, drop = FALSE]
   #H <- NULL
   
   results <- list(formula = formula, data = data, family = family, random.effects = random.effects, 
@@ -1158,12 +1301,12 @@ communityPGLMM.bayes <- function(formula, data = list(), family = "gaussian",
                   s2resid = resid_var, zi = zeroinlated_param, s2n.ci = variances.ci[nested, ], 
                   s2r.ci = variances.ci[!nested, ], s2resid.ci = resid_var.ci,
                   zi.ci = zeroinflated_param.ci,
-                  logLik = out$mlik[1, 1], AIC = NULL, BIC = NULL, DIC = DIC, 
+                  logLik = out$mlik[1, 1], AIC = NULL, BIC = NULL, DIC = DIC, WAIC = WAIC,
                   REML = NULL, bayes = TRUE, marginal.summ = marginal.summ, 
                   s2.init = s2.init, B.init = B.init, Y = Y, X = X, H = H, 
-                  iV = NULL, mu = NULL, nested = nested, Zt = NULL, St = NULL, 
+                  iV = NULL, mu = mu, nested = nested, Zt = NULL, St = NULL, 
                   convcode = NULL, niter = NULL, inla.model = out)
-  class(results) <- "communityPGLMM"
+  class(results) <- c("communityPGLMM", "pglmm")
   results
 }
 

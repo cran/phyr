@@ -1,46 +1,47 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <meta name="author" content="Daijiang Li" />
 
-<meta name="date" content="2019-11-13" />
+<meta name="date" content="2020-12-17" />
 
 <title>Performance benchmark</title>
 
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
 
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -49,9 +50,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -108,189 +109,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<style type="text/css">body {
-background-color: #fff;
-margin: 1em auto;
-max-width: 700px;
-overflow: visible;
-padding-left: 2em;
-padding-right: 2em;
-font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-font-size: 14px;
-line-height: 1.35;
-}
-#header {
-text-align: center;
-}
-#TOC {
-clear: both;
-margin: 0 0 10px 10px;
-padding: 4px;
-width: 400px;
-border: 1px solid #CCCCCC;
-border-radius: 5px;
-background-color: #f6f6f6;
-font-size: 13px;
-line-height: 1.3;
-}
-#TOC .toctitle {
-font-weight: bold;
-font-size: 15px;
-margin-left: 5px;
-}
-#TOC ul {
-padding-left: 40px;
-margin-left: -1.5em;
-margin-top: 5px;
-margin-bottom: 5px;
-}
-#TOC ul ul {
-margin-left: -2em;
-}
-#TOC li {
-line-height: 16px;
-}
-table {
-margin: 1em auto;
-border-width: 1px;
-border-color: #DDDDDD;
-border-style: outset;
-border-collapse: collapse;
-}
-table th {
-border-width: 2px;
-padding: 5px;
-border-style: inset;
-}
-table td {
-border-width: 1px;
-border-style: inset;
-line-height: 18px;
-padding: 5px 5px;
-}
-table, table th, table td {
-border-left-style: none;
-border-right-style: none;
-}
-table thead, table tr.even {
-background-color: #f7f7f7;
-}
-p {
-margin: 0.5em 0;
-}
-blockquote {
-background-color: #f6f6f6;
-padding: 0.25em 0.75em;
-}
-hr {
-border-style: solid;
-border: none;
-border-top: 1px solid #777;
-margin: 28px 0;
-}
-dl {
-margin-left: 0;
-}
-dl dd {
-margin-bottom: 13px;
-margin-left: 13px;
-}
-dl dt {
-font-weight: bold;
-}
-ul {
-margin-top: 0;
-}
-ul li {
-list-style: circle outside;
-}
-ul ul {
-margin-bottom: 0;
-}
-pre, code {
-background-color: #f7f7f7;
-border-radius: 3px;
-color: #333;
-white-space: pre-wrap; 
-}
-pre {
-border-radius: 3px;
-margin: 5px 0px 10px 0px;
-padding: 10px;
-}
-pre:not([class]) {
-background-color: #f7f7f7;
-}
-code {
-font-family: Consolas, Monaco, 'Courier New', monospace;
-font-size: 85%;
-}
-p > code, li > code {
-padding: 2px 0px;
-}
-div.figure {
-text-align: center;
-}
-img {
-background-color: #FFFFFF;
-padding: 2px;
-border: 1px solid #DDDDDD;
-border-radius: 3px;
-border: 1px solid #CCCCCC;
-margin: 0 5px;
-}
-h1 {
-margin-top: 0;
-font-size: 35px;
-line-height: 40px;
-}
-h2 {
-border-bottom: 4px solid #f7f7f7;
-padding-top: 10px;
-padding-bottom: 2px;
-font-size: 145%;
-}
-h3 {
-border-bottom: 2px solid #f7f7f7;
-padding-top: 10px;
-font-size: 120%;
-}
-h4 {
-border-bottom: 1px solid #f7f7f7;
-margin-left: 8px;
-font-size: 105%;
-}
-h5, h6 {
-border-bottom: 1px solid #ccc;
-font-size: 105%;
-}
-a {
-color: #0033dd;
-text-decoration: none;
-}
-a:hover {
-color: #6666ff; }
-a:visited {
-color: #800080; }
-a:visited:hover {
-color: #BB00BB; }
-a[href^="http:"] {
-text-decoration: underline; }
-a[href^="https:"] {
-text-decoration: underline; }
-
-code > span.kw { color: #555; font-weight: bold; } 
-code > span.dt { color: #902000; } 
-code > span.dv { color: #40a070; } 
-code > span.bn { color: #d14; } 
-code > span.fl { color: #d14; } 
-code > span.ch { color: #d14; } 
-code > span.st { color: #d14; } 
-code > span.co { color: #888888; font-style: italic; } 
-code > span.ot { color: #007020; } 
-code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
-</style>
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
 
 
 
@@ -304,7 +123,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Performance benchmark</h1>
 <h4 class="author">Daijiang Li</h4>
-<h4 class="date">2019-11-13</h4>
+<h4 class="date">2020-12-17</h4>
 
 
 
@@ -312,221 +131,221 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <h1>Benchmark for PSV family functions</h1>
 <div id="psv" class="section level2">
 <h2><code>psv</code></h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(phyr)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co"># simulate data</span></a>
-<a class="sourceLine" id="cb1-4" data-line-number="4">nspp =<span class="st"> </span><span class="dv">500</span></a>
-<a class="sourceLine" id="cb1-5" data-line-number="5">nsite =<span class="st"> </span><span class="dv">100</span></a>
-<a class="sourceLine" id="cb1-6" data-line-number="6">tree_sim =<span class="st"> </span>ape<span class="op">::</span><span class="kw">rtree</span>(<span class="dt">n =</span> nspp)</a>
-<a class="sourceLine" id="cb1-7" data-line-number="7">comm_sim =<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rbinom</span>(nspp <span class="op">*</span><span class="st"> </span>nsite, <span class="dt">size =</span> <span class="dv">1</span>, <span class="dt">prob =</span> <span class="fl">0.6</span>), </a>
-<a class="sourceLine" id="cb1-8" data-line-number="8">                  <span class="dt">nrow =</span> nsite, <span class="dt">ncol =</span> nspp)</a>
-<a class="sourceLine" id="cb1-9" data-line-number="9"><span class="kw">row.names</span>(comm_sim) =<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;site_&quot;</span>, <span class="dv">1</span><span class="op">:</span>nsite)</a>
-<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="kw">colnames</span>(comm_sim) =<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;t&quot;</span>, <span class="dv">1</span><span class="op">:</span>nspp)</a>
-<a class="sourceLine" id="cb1-11" data-line-number="11">comm_sim =<span class="st"> </span>comm_sim[, tree_sim<span class="op">$</span>tip.label]</a>
-<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="co"># about 40 times faster</span></a>
-<a class="sourceLine" id="cb1-13" data-line-number="13">rbenchmark<span class="op">::</span><span class="kw">benchmark</span>(</a>
-<a class="sourceLine" id="cb1-14" data-line-number="14">  <span class="st">&quot;picante&quot;</span> =<span class="st"> </span>{picante<span class="op">::</span><span class="kw">psv</span>(comm_sim, tree_sim)},</a>
-<a class="sourceLine" id="cb1-15" data-line-number="15">  <span class="st">&quot;phyr R&quot;</span> =<span class="st"> </span>{phyr<span class="op">::</span><span class="kw">psv</span>(comm_sim, tree_sim, <span class="dt">cpp =</span> <span class="ot">FALSE</span>)},</a>
-<a class="sourceLine" id="cb1-16" data-line-number="16">  <span class="st">&quot;phyr c++&quot;</span> =<span class="st"> </span>{phyr<span class="op">::</span><span class="kw">psv</span>(comm_sim, tree_sim, <span class="dt">cpp =</span> <span class="ot">TRUE</span>)},</a>
-<a class="sourceLine" id="cb1-17" data-line-number="17">  <span class="dt">replications =</span> <span class="dv">10</span>,</a>
-<a class="sourceLine" id="cb1-18" data-line-number="18">  <span class="dt">columns =</span> <span class="kw">c</span>(<span class="st">&quot;test&quot;</span>, <span class="st">&quot;replications&quot;</span>, <span class="st">&quot;elapsed&quot;</span>,</a>
-<a class="sourceLine" id="cb1-19" data-line-number="19">              <span class="st">&quot;relative&quot;</span>, <span class="st">&quot;user.self&quot;</span>, <span class="st">&quot;sys.self&quot;</span>))</a>
-<a class="sourceLine" id="cb1-20" data-line-number="20"><span class="co">#&gt;       test replications elapsed relative user.self sys.self</span></a>
-<a class="sourceLine" id="cb1-21" data-line-number="21"><span class="co">#&gt; 3 phyr c++           10   0.339    1.000     0.298    0.030</span></a>
-<a class="sourceLine" id="cb1-22" data-line-number="22"><span class="co">#&gt; 2   phyr R           10   3.287    9.696     2.907    0.303</span></a>
-<a class="sourceLine" id="cb1-23" data-line-number="23"><span class="co">#&gt; 1  picante           10  16.265   47.979    14.824    0.795</span></a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(phyr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate data</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>nspp <span class="ot">=</span> <span class="dv">500</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>nsite <span class="ot">=</span> <span class="dv">100</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>tree_sim <span class="ot">=</span> ape<span class="sc">::</span><span class="fu">rtree</span>(<span class="at">n =</span> nspp)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>comm_sim <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">rbinom</span>(nspp <span class="sc">*</span> nsite, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.6</span>), </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">nrow =</span> nsite, <span class="at">ncol =</span> nspp)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">row.names</span>(comm_sim) <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">&quot;site_&quot;</span>, <span class="dv">1</span><span class="sc">:</span>nsite)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(comm_sim) <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">&quot;t&quot;</span>, <span class="dv">1</span><span class="sc">:</span>nspp)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>comm_sim <span class="ot">=</span> comm_sim[, tree_sim<span class="sc">$</span>tip.label]</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># about 40 times faster</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>rbenchmark<span class="sc">::</span><span class="fu">benchmark</span>(</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;picante&quot;</span> <span class="ot">=</span> {picante<span class="sc">::</span><span class="fu">psv</span>(comm_sim, tree_sim)},</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;phyr R&quot;</span> <span class="ot">=</span> {phyr<span class="sc">::</span><span class="fu">psv</span>(comm_sim, tree_sim, <span class="at">cpp =</span> <span class="cn">FALSE</span>)},</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;phyr c++&quot;</span> <span class="ot">=</span> {phyr<span class="sc">::</span><span class="fu">psv</span>(comm_sim, tree_sim, <span class="at">cpp =</span> <span class="cn">TRUE</span>)},</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">replications =</span> <span class="dv">10</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">&quot;test&quot;</span>, <span class="st">&quot;replications&quot;</span>, <span class="st">&quot;elapsed&quot;</span>,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;relative&quot;</span>, <span class="st">&quot;user.self&quot;</span>, <span class="st">&quot;sys.self&quot;</span>))</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       test replications elapsed relative user.self sys.self</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 phyr c++           10   0.339    1.000     0.298    0.030</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   phyr R           10   3.287    9.696     2.907    0.303</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  picante           10  16.265   47.979    14.824    0.795</span></span></code></pre></div>
 </div>
 <div id="pse" class="section level2">
 <h2><code>pse</code></h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">comm_sim =<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rpois</span>(nspp <span class="op">*</span><span class="st"> </span>nsite, <span class="dv">3</span>), <span class="dt">nrow =</span> nsite, <span class="dt">ncol =</span> nspp)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">row.names</span>(comm_sim) =<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;site_&quot;</span>, <span class="dv">1</span><span class="op">:</span>nsite)</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw">colnames</span>(comm_sim) =<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;t&quot;</span>, <span class="dv">1</span><span class="op">:</span>nspp)</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">comm_sim =<span class="st"> </span>comm_sim[, tree_sim<span class="op">$</span>tip.label]</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co"># about 2-3 times faster</span></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6">rbenchmark<span class="op">::</span><span class="kw">benchmark</span>(</a>
-<a class="sourceLine" id="cb2-7" data-line-number="7">  <span class="st">&quot;picante&quot;</span> =<span class="st"> </span>{picante<span class="op">::</span><span class="kw">pse</span>(comm_sim, tree_sim)},</a>
-<a class="sourceLine" id="cb2-8" data-line-number="8">  <span class="st">&quot;phyr R&quot;</span> =<span class="st"> </span>{phyr<span class="op">::</span><span class="kw">pse</span>(comm_sim, tree_sim, <span class="dt">cpp =</span> <span class="ot">FALSE</span>)},</a>
-<a class="sourceLine" id="cb2-9" data-line-number="9">  <span class="st">&quot;phyr c++&quot;</span> =<span class="st"> </span>{phyr<span class="op">::</span><span class="kw">pse</span>(comm_sim, tree_sim, <span class="dt">cpp =</span> <span class="ot">TRUE</span>)},</a>
-<a class="sourceLine" id="cb2-10" data-line-number="10">  <span class="dt">replications =</span> <span class="dv">20</span>,</a>
-<a class="sourceLine" id="cb2-11" data-line-number="11">  <span class="dt">columns =</span> <span class="kw">c</span>(<span class="st">&quot;test&quot;</span>, <span class="st">&quot;replications&quot;</span>, <span class="st">&quot;elapsed&quot;</span>,</a>
-<a class="sourceLine" id="cb2-12" data-line-number="12">              <span class="st">&quot;relative&quot;</span>, <span class="st">&quot;user.self&quot;</span>, <span class="st">&quot;sys.self&quot;</span>))</a>
-<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt;       test replications elapsed relative user.self sys.self</span></a>
-<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">#&gt; 3 phyr c++           20   1.456    1.000     1.329    0.105</span></a>
-<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">#&gt; 2   phyr R           20   4.233    2.907     3.453    0.555</span></a>
-<a class="sourceLine" id="cb2-16" data-line-number="16"><span class="co">#&gt; 1  picante           20   3.858    2.650     3.319    0.475</span></a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>comm_sim <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">rpois</span>(nspp <span class="sc">*</span> nsite, <span class="dv">3</span>), <span class="at">nrow =</span> nsite, <span class="at">ncol =</span> nspp)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">row.names</span>(comm_sim) <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">&quot;site_&quot;</span>, <span class="dv">1</span><span class="sc">:</span>nsite)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(comm_sim) <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">&quot;t&quot;</span>, <span class="dv">1</span><span class="sc">:</span>nspp)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>comm_sim <span class="ot">=</span> comm_sim[, tree_sim<span class="sc">$</span>tip.label]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># about 2-3 times faster</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>rbenchmark<span class="sc">::</span><span class="fu">benchmark</span>(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;picante&quot;</span> <span class="ot">=</span> {picante<span class="sc">::</span><span class="fu">pse</span>(comm_sim, tree_sim)},</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;phyr R&quot;</span> <span class="ot">=</span> {phyr<span class="sc">::</span><span class="fu">pse</span>(comm_sim, tree_sim, <span class="at">cpp =</span> <span class="cn">FALSE</span>)},</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;phyr c++&quot;</span> <span class="ot">=</span> {phyr<span class="sc">::</span><span class="fu">pse</span>(comm_sim, tree_sim, <span class="at">cpp =</span> <span class="cn">TRUE</span>)},</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">replications =</span> <span class="dv">20</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">&quot;test&quot;</span>, <span class="st">&quot;replications&quot;</span>, <span class="st">&quot;elapsed&quot;</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;relative&quot;</span>, <span class="st">&quot;user.self&quot;</span>, <span class="st">&quot;sys.self&quot;</span>))</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       test replications elapsed relative user.self sys.self</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 phyr c++           20   1.456    1.000     1.329    0.105</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   phyr R           20   4.233    2.907     3.453    0.555</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  picante           20   3.858    2.650     3.319    0.475</span></span></code></pre></div>
 </div>
 <div id="pcd" class="section level2">
 <h2><code>pcd</code></h2>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># pcd is about 20 times faster</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">rbenchmark<span class="op">::</span><span class="kw">benchmark</span>(</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">  <span class="st">&quot;phyr&quot;</span> =<span class="st"> </span>{phyr<span class="op">::</span><span class="kw">pcd</span>(<span class="dt">comm =</span> comm_a, <span class="dt">tree =</span> phylotree, <span class="dt">reps =</span> <span class="dv">1000</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)},</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">  <span class="st">&quot;picante&quot;</span> =<span class="st"> </span>{picante<span class="op">::</span><span class="kw">pcd</span>(<span class="dt">comm =</span> comm_a, <span class="dt">tree =</span> phylotree, <span class="dt">reps =</span> <span class="dv">1000</span>)},</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5">  <span class="dt">replications =</span> <span class="dv">10</span>,</a>
-<a class="sourceLine" id="cb3-6" data-line-number="6">  <span class="dt">columns =</span> <span class="kw">c</span>(<span class="st">&quot;test&quot;</span>, <span class="st">&quot;replications&quot;</span>, <span class="st">&quot;elapsed&quot;</span>,</a>
-<a class="sourceLine" id="cb3-7" data-line-number="7">              <span class="st">&quot;relative&quot;</span>, <span class="st">&quot;user.self&quot;</span>, <span class="st">&quot;sys.self&quot;</span>))</a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt;      test replications elapsed relative user.self sys.self</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; 1    phyr           10   0.214    1.000     0.192    0.012</span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; 2 picante           10   4.516   21.103     4.043    0.074</span></a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pcd is about 20 times faster</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>rbenchmark<span class="sc">::</span><span class="fu">benchmark</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;phyr&quot;</span> <span class="ot">=</span> {phyr<span class="sc">::</span><span class="fu">pcd</span>(<span class="at">comm =</span> comm_a, <span class="at">tree =</span> phylotree, <span class="at">reps =</span> <span class="dv">1000</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>)},</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;picante&quot;</span> <span class="ot">=</span> {picante<span class="sc">::</span><span class="fu">pcd</span>(<span class="at">comm =</span> comm_a, <span class="at">tree =</span> phylotree, <span class="at">reps =</span> <span class="dv">1000</span>)},</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">replications =</span> <span class="dv">10</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">&quot;test&quot;</span>, <span class="st">&quot;replications&quot;</span>, <span class="st">&quot;elapsed&quot;</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;relative&quot;</span>, <span class="st">&quot;user.self&quot;</span>, <span class="st">&quot;sys.self&quot;</span>))</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      test replications elapsed relative user.self sys.self</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    phyr           10   0.214    1.000     0.192    0.012</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 picante           10   4.516   21.103     4.043    0.074</span></span></code></pre></div>
 </div>
 </div>
 <div id="benchmark-for-community-pglmm-pglmm" class="section level1">
 <h1>Benchmark for community PGLMM (<code>pglmm</code>)</h1>
 <p>To compare the cpp version and R version, and the version from the <code>pez</code> package.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">library</span>(dplyr)</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">comm =<span class="st"> </span>comm_a</a>
-<a class="sourceLine" id="cb4-3" data-line-number="3">comm<span class="op">$</span>site =<span class="st"> </span><span class="kw">row.names</span>(comm)</a>
-<a class="sourceLine" id="cb4-4" data-line-number="4">dat =<span class="st"> </span>tidyr<span class="op">::</span><span class="kw">gather</span>(comm, <span class="dt">key =</span> <span class="st">&quot;sp&quot;</span>, <span class="dt">value =</span> <span class="st">&quot;freq&quot;</span>, <span class="op">-</span>site) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">  </span><span class="kw">left_join</span>(envi, <span class="dt">by =</span> <span class="st">&quot;site&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="st">  </span><span class="kw">left_join</span>(traits, <span class="dt">by =</span> <span class="st">&quot;sp&quot;</span>)</a>
-<a class="sourceLine" id="cb4-7" data-line-number="7">dat<span class="op">$</span>pa =<span class="st"> </span><span class="kw">as.numeric</span>(dat<span class="op">$</span>freq <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co"># data prep for pez::communityPGLMM, not necessary for phyr::pglmm</span></a>
-<a class="sourceLine" id="cb4-9" data-line-number="9">dat =<span class="st"> </span><span class="kw">arrange</span>(dat, site, sp)</a>
-<a class="sourceLine" id="cb4-10" data-line-number="10">dat =<span class="st"> </span><span class="kw">filter</span>(dat, sp <span class="op">%in%</span><span class="st"> </span><span class="kw">sample</span>(<span class="kw">unique</span>(dat<span class="op">$</span>sp), <span class="dv">10</span>),</a>
-<a class="sourceLine" id="cb4-11" data-line-number="11">             site <span class="op">%in%</span><span class="st"> </span><span class="kw">sample</span>(<span class="kw">unique</span>(dat<span class="op">$</span>site), <span class="dv">5</span>))</a>
-<a class="sourceLine" id="cb4-12" data-line-number="12">nspp =<span class="st"> </span><span class="kw">n_distinct</span>(dat<span class="op">$</span>sp)</a>
-<a class="sourceLine" id="cb4-13" data-line-number="13">nsite =<span class="st"> </span><span class="kw">n_distinct</span>(dat<span class="op">$</span>site)</a>
-<a class="sourceLine" id="cb4-14" data-line-number="14"></a>
-<a class="sourceLine" id="cb4-15" data-line-number="15">dat<span class="op">$</span>site =<span class="st"> </span><span class="kw">as.factor</span>(dat<span class="op">$</span>site)</a>
-<a class="sourceLine" id="cb4-16" data-line-number="16">dat<span class="op">$</span>sp =<span class="st"> </span><span class="kw">as.factor</span>(dat<span class="op">$</span>sp)</a>
-<a class="sourceLine" id="cb4-17" data-line-number="17"></a>
-<a class="sourceLine" id="cb4-18" data-line-number="18">tree =<span class="st"> </span>ape<span class="op">::</span><span class="kw">drop.tip</span>(phylotree, <span class="kw">setdiff</span>(phylotree<span class="op">$</span>tip.label, <span class="kw">unique</span>(dat<span class="op">$</span>sp)))</a>
-<a class="sourceLine" id="cb4-19" data-line-number="19">Vphy &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw">vcv</span>(tree)</a>
-<a class="sourceLine" id="cb4-20" data-line-number="20">Vphy &lt;-<span class="st"> </span>Vphy<span class="op">/</span><span class="kw">max</span>(Vphy)</a>
-<a class="sourceLine" id="cb4-21" data-line-number="21">Vphy &lt;-<span class="st"> </span>Vphy<span class="op">/</span><span class="kw">exp</span>(<span class="kw">determinant</span>(Vphy)<span class="op">$</span>modulus[<span class="dv">1</span>]<span class="op">/</span>nspp)</a>
-<a class="sourceLine" id="cb4-22" data-line-number="22">Vphy =<span class="st"> </span>Vphy[<span class="kw">levels</span>(dat<span class="op">$</span>sp), <span class="kw">levels</span>(dat<span class="op">$</span>sp)]</a>
-<a class="sourceLine" id="cb4-23" data-line-number="23"></a>
-<a class="sourceLine" id="cb4-24" data-line-number="24"><span class="co"># prepare random effects</span></a>
-<a class="sourceLine" id="cb4-25" data-line-number="25">re.site &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dv">1</span>, <span class="dt">site =</span> dat<span class="op">$</span>site, <span class="dt">covar =</span> <span class="kw">diag</span>(nsite))</a>
-<a class="sourceLine" id="cb4-26" data-line-number="26">re.sp &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dv">1</span>, <span class="dt">sp =</span> dat<span class="op">$</span>sp, <span class="dt">covar =</span> <span class="kw">diag</span>(nspp))</a>
-<a class="sourceLine" id="cb4-27" data-line-number="27">re.sp.phy &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dv">1</span>, <span class="dt">sp =</span> dat<span class="op">$</span>sp, <span class="dt">covar =</span> Vphy)</a>
-<a class="sourceLine" id="cb4-28" data-line-number="28"><span class="co"># sp is nested within site</span></a>
-<a class="sourceLine" id="cb4-29" data-line-number="29">re.nested.phy &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dv">1</span>, <span class="dt">sp =</span> dat<span class="op">$</span>sp, <span class="dt">covar =</span> Vphy, <span class="dt">site =</span> dat<span class="op">$</span>site)</a>
-<a class="sourceLine" id="cb4-30" data-line-number="30">re.nested.rep &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dv">1</span>, <span class="dt">sp =</span> dat<span class="op">$</span>sp, <span class="dt">covar =</span> <span class="kw">solve</span>(Vphy), <span class="dt">site =</span> dat<span class="op">$</span>site) <span class="co"># equal to sp__@site</span></a>
-<a class="sourceLine" id="cb4-31" data-line-number="31"><span class="co"># can be named </span></a>
-<a class="sourceLine" id="cb4-32" data-line-number="32">re =<span class="st"> </span><span class="kw">list</span>(<span class="dt">re.sp =</span> re.sp, <span class="dt">re.sp.phy =</span> re.sp.phy, <span class="dt">re.nested.phy =</span> re.nested.phy, <span class="dt">re.site =</span> re.site)</a>
-<a class="sourceLine" id="cb4-33" data-line-number="33"></a>
-<a class="sourceLine" id="cb4-34" data-line-number="34"><span class="co"># about 4-10 times faster for a small dataset</span></a>
-<a class="sourceLine" id="cb4-35" data-line-number="35">rbenchmark<span class="op">::</span><span class="kw">benchmark</span>(</a>
-<a class="sourceLine" id="cb4-36" data-line-number="36">  <span class="st">&quot;phyr c++ bobyqa&quot;</span> =<span class="st"> </span>{phyr<span class="op">::</span><span class="kw">pglmm</span>(freq <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>shade <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>sp__) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>site) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>sp__<span class="op">@</span>site), </a>
-<a class="sourceLine" id="cb4-37" data-line-number="37">              dat, <span class="dt">cov_ranef =</span> <span class="kw">list</span>(<span class="dt">sp =</span> phylotree), <span class="dt">REML =</span> <span class="ot">FALSE</span>, </a>
-<a class="sourceLine" id="cb4-38" data-line-number="38">              <span class="dt">cpp =</span> <span class="ot">TRUE</span>, <span class="dt">optimizer =</span> <span class="st">&quot;bobyqa&quot;</span>)},</a>
-<a class="sourceLine" id="cb4-39" data-line-number="39">  <span class="st">&quot;phyr c++ Nelder-Mead&quot;</span> =<span class="st"> </span>{phyr<span class="op">::</span><span class="kw">pglmm</span>(freq <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>shade <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>sp__) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>site) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>sp__<span class="op">@</span>site), </a>
-<a class="sourceLine" id="cb4-40" data-line-number="40">              dat, <span class="dt">cov_ranef =</span> <span class="kw">list</span>(<span class="dt">sp =</span> phylotree), <span class="dt">REML =</span> <span class="ot">FALSE</span>, </a>
-<a class="sourceLine" id="cb4-41" data-line-number="41">              <span class="dt">cpp =</span> <span class="ot">TRUE</span>, <span class="dt">optimizer =</span> <span class="st">&quot;Nelder-Mead&quot;</span>)},</a>
-<a class="sourceLine" id="cb4-42" data-line-number="42">  <span class="st">&quot;phyr R Nelder-Mead&quot;</span> =<span class="st"> </span>{phyr<span class="op">::</span><span class="kw">pglmm</span>(freq <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>shade <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>sp__) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>site) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>sp__<span class="op">@</span>site), </a>
-<a class="sourceLine" id="cb4-43" data-line-number="43">              dat, <span class="dt">cov_ranef =</span> <span class="kw">list</span>(<span class="dt">sp =</span> phylotree), <span class="dt">REML =</span> <span class="ot">FALSE</span>, </a>
-<a class="sourceLine" id="cb4-44" data-line-number="44">              <span class="dt">cpp =</span> <span class="ot">FALSE</span>, <span class="dt">optimizer =</span> <span class="st">&quot;Nelder-Mead&quot;</span>)},</a>
-<a class="sourceLine" id="cb4-45" data-line-number="45">  <span class="st">&quot;pez R Nelder-Mead&quot;</span> =<span class="st"> </span>{pez<span class="op">::</span><span class="kw">communityPGLMM</span>(freq <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>shade, <span class="dt">data =</span> dat, <span class="dt">sp =</span> dat<span class="op">$</span>sp, <span class="dt">site =</span> dat<span class="op">$</span>site, </a>
-<a class="sourceLine" id="cb4-46" data-line-number="46">                      <span class="dt">random.effects =</span> re, <span class="dt">REML =</span> <span class="ot">FALSE</span>)},</a>
-<a class="sourceLine" id="cb4-47" data-line-number="47">  <span class="dt">replications =</span> <span class="dv">5</span>,</a>
-<a class="sourceLine" id="cb4-48" data-line-number="48">  <span class="dt">columns =</span> <span class="kw">c</span>(<span class="st">&quot;test&quot;</span>, <span class="st">&quot;replications&quot;</span>, <span class="st">&quot;elapsed&quot;</span>,</a>
-<a class="sourceLine" id="cb4-49" data-line-number="49">              <span class="st">&quot;relative&quot;</span>, <span class="st">&quot;user.self&quot;</span>, <span class="st">&quot;sys.self&quot;</span>)</a>
-<a class="sourceLine" id="cb4-50" data-line-number="50">)</a>
-<a class="sourceLine" id="cb4-51" data-line-number="51"><span class="co">#&gt;                   test replications elapsed relative user.self sys.self</span></a>
-<a class="sourceLine" id="cb4-52" data-line-number="52"><span class="co">#&gt; 4    pez R Nelder-Mead            5  32.214   88.989    30.821    0.374</span></a>
-<a class="sourceLine" id="cb4-53" data-line-number="53"><span class="co">#&gt; 1      phyr c++ bobyqa            5   0.362    1.000     0.342    0.006</span></a>
-<a class="sourceLine" id="cb4-54" data-line-number="54"><span class="co">#&gt; 2 phyr c++ Nelder-Mead            5   1.156    3.193     1.115    0.015</span></a>
-<a class="sourceLine" id="cb4-55" data-line-number="55"><span class="co">#&gt; 3   phyr R Nelder-Mead            5  33.281   91.936    31.198    0.480</span></a>
-<a class="sourceLine" id="cb4-56" data-line-number="56"></a>
-<a class="sourceLine" id="cb4-57" data-line-number="57"><span class="co"># about 6 times faster for a small dataset</span></a>
-<a class="sourceLine" id="cb4-58" data-line-number="58">rbenchmark<span class="op">::</span><span class="kw">benchmark</span>(</a>
-<a class="sourceLine" id="cb4-59" data-line-number="59">  <span class="st">&quot;phyr c++ bobyqa&quot;</span> =<span class="st"> </span>{phyr<span class="op">::</span><span class="kw">pglmm</span>(pa <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>shade <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>sp__) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>site) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>sp__<span class="op">@</span>site), </a>
-<a class="sourceLine" id="cb4-60" data-line-number="60">              dat, <span class="dt">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="dt">cov_ranef =</span> <span class="kw">list</span>(<span class="dt">sp =</span> phylotree), <span class="dt">REML =</span> <span class="ot">FALSE</span>, </a>
-<a class="sourceLine" id="cb4-61" data-line-number="61">              <span class="dt">cpp =</span> <span class="ot">TRUE</span>, <span class="dt">optimizer =</span> <span class="st">&quot;bobyqa&quot;</span>)},</a>
-<a class="sourceLine" id="cb4-62" data-line-number="62">  <span class="st">&quot;phyr c++ Nelder-Mead&quot;</span> =<span class="st"> </span>{phyr<span class="op">::</span><span class="kw">pglmm</span>(pa <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>shade <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>sp__) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>site) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>sp__<span class="op">@</span>site), </a>
-<a class="sourceLine" id="cb4-63" data-line-number="63">              dat, <span class="dt">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="dt">cov_ranef =</span> <span class="kw">list</span>(<span class="dt">sp =</span> phylotree), <span class="dt">REML =</span> <span class="ot">FALSE</span>, </a>
-<a class="sourceLine" id="cb4-64" data-line-number="64">              <span class="dt">cpp =</span> <span class="ot">TRUE</span>, <span class="dt">optimizer =</span> <span class="st">&quot;Nelder-Mead&quot;</span>)},</a>
-<a class="sourceLine" id="cb4-65" data-line-number="65">  <span class="st">&quot;phyr R Nelder-Mead&quot;</span> =<span class="st"> </span>{phyr<span class="op">::</span><span class="kw">pglmm</span>(pa <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>shade <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>sp__) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>site) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>sp__<span class="op">@</span>site), </a>
-<a class="sourceLine" id="cb4-66" data-line-number="66">              dat, <span class="dt">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="dt">cov_ranef =</span> <span class="kw">list</span>(<span class="dt">sp =</span> phylotree), <span class="dt">REML =</span> <span class="ot">FALSE</span>, </a>
-<a class="sourceLine" id="cb4-67" data-line-number="67">              <span class="dt">cpp =</span> <span class="ot">FALSE</span>, <span class="dt">optimizer =</span> <span class="st">&quot;Nelder-Mead&quot;</span>)},</a>
-<a class="sourceLine" id="cb4-68" data-line-number="68">  <span class="st">&quot;pez R Nelder-Mead&quot;</span> =<span class="st"> </span>{pez<span class="op">::</span><span class="kw">communityPGLMM</span>(pa <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>shade, <span class="dt">data =</span> dat, <span class="dt">sp =</span> dat<span class="op">$</span>sp, </a>
-<a class="sourceLine" id="cb4-69" data-line-number="69">                                             <span class="dt">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="dt">site =</span> dat<span class="op">$</span>site, </a>
-<a class="sourceLine" id="cb4-70" data-line-number="70">                      <span class="dt">random.effects =</span> re, <span class="dt">REML =</span> <span class="ot">FALSE</span>)},</a>
-<a class="sourceLine" id="cb4-71" data-line-number="71">  <span class="dt">replications =</span> <span class="dv">5</span>,</a>
-<a class="sourceLine" id="cb4-72" data-line-number="72">  <span class="dt">columns =</span> <span class="kw">c</span>(<span class="st">&quot;test&quot;</span>, <span class="st">&quot;replications&quot;</span>, <span class="st">&quot;elapsed&quot;</span>,</a>
-<a class="sourceLine" id="cb4-73" data-line-number="73">              <span class="st">&quot;relative&quot;</span>, <span class="st">&quot;user.self&quot;</span>, <span class="st">&quot;sys.self&quot;</span>)</a>
-<a class="sourceLine" id="cb4-74" data-line-number="74">)</a>
-<a class="sourceLine" id="cb4-75" data-line-number="75"><span class="co">#&gt;                   test replications elapsed relative user.self sys.self</span></a>
-<a class="sourceLine" id="cb4-76" data-line-number="76"><span class="co">#&gt; 4    pez R Nelder-Mead            5  49.296   42.314    45.731    0.604</span></a>
-<a class="sourceLine" id="cb4-77" data-line-number="77"><span class="co">#&gt; 1      phyr c++ bobyqa            5   1.840    1.579     1.750    0.033</span></a>
-<a class="sourceLine" id="cb4-78" data-line-number="78"><span class="co">#&gt; 2 phyr c++ Nelder-Mead            5   1.165    1.000     1.093    0.021</span></a>
-<a class="sourceLine" id="cb4-79" data-line-number="79"><span class="co">#&gt; 3   phyr R Nelder-Mead            5  24.355   20.906    23.024    0.317</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>comm <span class="ot">=</span> comm_a</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>comm<span class="sc">$</span>site <span class="ot">=</span> <span class="fu">row.names</span>(comm)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">=</span> tidyr<span class="sc">::</span><span class="fu">gather</span>(comm, <span class="at">key =</span> <span class="st">&quot;sp&quot;</span>, <span class="at">value =</span> <span class="st">&quot;freq&quot;</span>, <span class="sc">-</span>site) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(envi, <span class="at">by =</span> <span class="st">&quot;site&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(traits, <span class="at">by =</span> <span class="st">&quot;sp&quot;</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>pa <span class="ot">=</span> <span class="fu">as.numeric</span>(dat<span class="sc">$</span>freq <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># data prep for pez::communityPGLMM, not necessary for phyr::pglmm</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">=</span> <span class="fu">arrange</span>(dat, site, sp)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">=</span> <span class="fu">filter</span>(dat, sp <span class="sc">%in%</span> <span class="fu">sample</span>(<span class="fu">unique</span>(dat<span class="sc">$</span>sp), <span class="dv">10</span>),</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>             site <span class="sc">%in%</span> <span class="fu">sample</span>(<span class="fu">unique</span>(dat<span class="sc">$</span>site), <span class="dv">5</span>))</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>nspp <span class="ot">=</span> <span class="fu">n_distinct</span>(dat<span class="sc">$</span>sp)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>nsite <span class="ot">=</span> <span class="fu">n_distinct</span>(dat<span class="sc">$</span>site)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>site <span class="ot">=</span> <span class="fu">as.factor</span>(dat<span class="sc">$</span>site)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>sp <span class="ot">=</span> <span class="fu">as.factor</span>(dat<span class="sc">$</span>sp)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>tree <span class="ot">=</span> ape<span class="sc">::</span><span class="fu">drop.tip</span>(phylotree, <span class="fu">setdiff</span>(phylotree<span class="sc">$</span>tip.label, <span class="fu">unique</span>(dat<span class="sc">$</span>sp)))</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>Vphy <span class="ot">&lt;-</span> ape<span class="sc">::</span><span class="fu">vcv</span>(tree)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>Vphy <span class="ot">&lt;-</span> Vphy<span class="sc">/</span><span class="fu">max</span>(Vphy)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>Vphy <span class="ot">&lt;-</span> Vphy<span class="sc">/</span><span class="fu">exp</span>(<span class="fu">determinant</span>(Vphy)<span class="sc">$</span>modulus[<span class="dv">1</span>]<span class="sc">/</span>nspp)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>Vphy <span class="ot">=</span> Vphy[<span class="fu">levels</span>(dat<span class="sc">$</span>sp), <span class="fu">levels</span>(dat<span class="sc">$</span>sp)]</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co"># prepare random effects</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>re.site <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="at">site =</span> dat<span class="sc">$</span>site, <span class="at">covar =</span> <span class="fu">diag</span>(nsite))</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>re.sp <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="at">sp =</span> dat<span class="sc">$</span>sp, <span class="at">covar =</span> <span class="fu">diag</span>(nspp))</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>re.sp.phy <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="at">sp =</span> dat<span class="sc">$</span>sp, <span class="at">covar =</span> Vphy)</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co"># sp is nested within site</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>re.nested.phy <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="at">sp =</span> dat<span class="sc">$</span>sp, <span class="at">covar =</span> Vphy, <span class="at">site =</span> dat<span class="sc">$</span>site)</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>re.nested.rep <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="at">sp =</span> dat<span class="sc">$</span>sp, <span class="at">covar =</span> <span class="fu">solve</span>(Vphy), <span class="at">site =</span> dat<span class="sc">$</span>site) <span class="co"># equal to sp__@site</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co"># can be named </span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>re <span class="ot">=</span> <span class="fu">list</span>(<span class="at">re.sp =</span> re.sp, <span class="at">re.sp.phy =</span> re.sp.phy, <span class="at">re.nested.phy =</span> re.nested.phy, <span class="at">re.site =</span> re.site)</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co"># about 4-10 times faster for a small dataset</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>rbenchmark<span class="sc">::</span><span class="fu">benchmark</span>(</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;phyr c++ bobyqa&quot;</span> <span class="ot">=</span> {phyr<span class="sc">::</span><span class="fu">pglmm</span>(freq <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> shade <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>sp__) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>site) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>sp__<span class="sc">@</span>site), </span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>              dat, <span class="at">cov_ranef =</span> <span class="fu">list</span>(<span class="at">sp =</span> phylotree), <span class="at">REML =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>              <span class="at">cpp =</span> <span class="cn">TRUE</span>, <span class="at">optimizer =</span> <span class="st">&quot;bobyqa&quot;</span>)},</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;phyr c++ Nelder-Mead&quot;</span> <span class="ot">=</span> {phyr<span class="sc">::</span><span class="fu">pglmm</span>(freq <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> shade <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>sp__) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>site) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>sp__<span class="sc">@</span>site), </span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>              dat, <span class="at">cov_ranef =</span> <span class="fu">list</span>(<span class="at">sp =</span> phylotree), <span class="at">REML =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>              <span class="at">cpp =</span> <span class="cn">TRUE</span>, <span class="at">optimizer =</span> <span class="st">&quot;Nelder-Mead&quot;</span>)},</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;phyr R Nelder-Mead&quot;</span> <span class="ot">=</span> {phyr<span class="sc">::</span><span class="fu">pglmm</span>(freq <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> shade <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>sp__) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>site) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>sp__<span class="sc">@</span>site), </span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>              dat, <span class="at">cov_ranef =</span> <span class="fu">list</span>(<span class="at">sp =</span> phylotree), <span class="at">REML =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>              <span class="at">cpp =</span> <span class="cn">FALSE</span>, <span class="at">optimizer =</span> <span class="st">&quot;Nelder-Mead&quot;</span>)},</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;pez R Nelder-Mead&quot;</span> <span class="ot">=</span> {pez<span class="sc">::</span><span class="fu">communityPGLMM</span>(freq <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> shade, <span class="at">data =</span> dat, <span class="at">sp =</span> dat<span class="sc">$</span>sp, <span class="at">site =</span> dat<span class="sc">$</span>site, </span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>                      <span class="at">random.effects =</span> re, <span class="at">REML =</span> <span class="cn">FALSE</span>)},</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>  <span class="at">replications =</span> <span class="dv">5</span>,</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">&quot;test&quot;</span>, <span class="st">&quot;replications&quot;</span>, <span class="st">&quot;elapsed&quot;</span>,</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;relative&quot;</span>, <span class="st">&quot;user.self&quot;</span>, <span class="st">&quot;sys.self&quot;</span>)</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                   test replications elapsed relative user.self sys.self</span></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    pez R Nelder-Mead            5  32.214   88.989    30.821    0.374</span></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1      phyr c++ bobyqa            5   0.362    1.000     0.342    0.006</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 phyr c++ Nelder-Mead            5   1.156    3.193     1.115    0.015</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   phyr R Nelder-Mead            5  33.281   91.936    31.198    0.480</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="co"># about 6 times faster for a small dataset</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>rbenchmark<span class="sc">::</span><span class="fu">benchmark</span>(</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;phyr c++ bobyqa&quot;</span> <span class="ot">=</span> {phyr<span class="sc">::</span><span class="fu">pglmm</span>(pa <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> shade <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>sp__) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>site) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>sp__<span class="sc">@</span>site), </span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>              dat, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">cov_ranef =</span> <span class="fu">list</span>(<span class="at">sp =</span> phylotree), <span class="at">REML =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>              <span class="at">cpp =</span> <span class="cn">TRUE</span>, <span class="at">optimizer =</span> <span class="st">&quot;bobyqa&quot;</span>)},</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;phyr c++ Nelder-Mead&quot;</span> <span class="ot">=</span> {phyr<span class="sc">::</span><span class="fu">pglmm</span>(pa <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> shade <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>sp__) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>site) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>sp__<span class="sc">@</span>site), </span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>              dat, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">cov_ranef =</span> <span class="fu">list</span>(<span class="at">sp =</span> phylotree), <span class="at">REML =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>              <span class="at">cpp =</span> <span class="cn">TRUE</span>, <span class="at">optimizer =</span> <span class="st">&quot;Nelder-Mead&quot;</span>)},</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;phyr R Nelder-Mead&quot;</span> <span class="ot">=</span> {phyr<span class="sc">::</span><span class="fu">pglmm</span>(pa <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> shade <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>sp__) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>site) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>sp__<span class="sc">@</span>site), </span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>              dat, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">cov_ranef =</span> <span class="fu">list</span>(<span class="at">sp =</span> phylotree), <span class="at">REML =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>              <span class="at">cpp =</span> <span class="cn">FALSE</span>, <span class="at">optimizer =</span> <span class="st">&quot;Nelder-Mead&quot;</span>)},</span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;pez R Nelder-Mead&quot;</span> <span class="ot">=</span> {pez<span class="sc">::</span><span class="fu">communityPGLMM</span>(pa <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> shade, <span class="at">data =</span> dat, <span class="at">sp =</span> dat<span class="sc">$</span>sp, </span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">site =</span> dat<span class="sc">$</span>site, </span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>                      <span class="at">random.effects =</span> re, <span class="at">REML =</span> <span class="cn">FALSE</span>)},</span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">replications =</span> <span class="dv">5</span>,</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">&quot;test&quot;</span>, <span class="st">&quot;replications&quot;</span>, <span class="st">&quot;elapsed&quot;</span>,</span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;relative&quot;</span>, <span class="st">&quot;user.self&quot;</span>, <span class="st">&quot;sys.self&quot;</span>)</span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                   test replications elapsed relative user.self sys.self</span></span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    pez R Nelder-Mead            5  49.296   42.314    45.731    0.604</span></span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1      phyr c++ bobyqa            5   1.840    1.579     1.750    0.033</span></span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 phyr c++ Nelder-Mead            5   1.165    1.000     1.093    0.021</span></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   phyr R Nelder-Mead            5  24.355   20.906    23.024    0.317</span></span></code></pre></div>
 </div>
 <div id="benchmark-for-cor_phylo" class="section level1">
 <h1>Benchmark for <code>cor_phylo()</code></h1>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">library</span>(ape)</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co"># Set up parameter values for simulating data</span></a>
-<a class="sourceLine" id="cb5-3" data-line-number="3">n &lt;-<span class="st"> </span><span class="dv">50</span></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4">phy &lt;-<span class="st"> </span><span class="kw">rcoal</span>(n, <span class="dt">tip.label =</span> <span class="dv">1</span><span class="op">:</span>n)</a>
-<a class="sourceLine" id="cb5-5" data-line-number="5">trt_names &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;par&quot;</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb5-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb5-7" data-line-number="7">R &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="dv">1</span>), <span class="dt">nrow =</span> <span class="dv">2</span>, <span class="dt">ncol =</span> <span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb5-8" data-line-number="8">d &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.3</span>, <span class="fl">0.95</span>)</a>
-<a class="sourceLine" id="cb5-9" data-line-number="9">B2 &lt;-<span class="st"> </span><span class="dv">1</span></a>
-<a class="sourceLine" id="cb5-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb5-11" data-line-number="11">Se &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.2</span>, <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb5-12" data-line-number="12">M &lt;-<span class="st"> </span><span class="kw">matrix</span>(Se, <span class="dt">nrow =</span> n, <span class="dt">ncol =</span> <span class="dv">2</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="kw">colnames</span>(M) &lt;-<span class="st"> </span>trt_names</a>
-<a class="sourceLine" id="cb5-14" data-line-number="14"></a>
-<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co"># Set up needed matrices for the simulations</span></a>
-<a class="sourceLine" id="cb5-16" data-line-number="16">p &lt;-<span class="st"> </span><span class="kw">length</span>(d)</a>
-<a class="sourceLine" id="cb5-17" data-line-number="17"></a>
-<a class="sourceLine" id="cb5-18" data-line-number="18">star &lt;-<span class="st"> </span><span class="kw">stree</span>(n)</a>
-<a class="sourceLine" id="cb5-19" data-line-number="19">star<span class="op">$</span>edge.length &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">1</span>, <span class="dt">dim =</span> <span class="kw">c</span>(n, <span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb5-20" data-line-number="20">star<span class="op">$</span>tip.label &lt;-<span class="st"> </span>phy<span class="op">$</span>tip.label</a>
-<a class="sourceLine" id="cb5-21" data-line-number="21"></a>
-<a class="sourceLine" id="cb5-22" data-line-number="22">Vphy &lt;-<span class="st"> </span><span class="kw">vcv</span>(phy)</a>
-<a class="sourceLine" id="cb5-23" data-line-number="23">Vphy &lt;-<span class="st"> </span>Vphy<span class="op">/</span><span class="kw">max</span>(Vphy)</a>
-<a class="sourceLine" id="cb5-24" data-line-number="24">Vphy &lt;-<span class="st"> </span>Vphy<span class="op">/</span><span class="kw">exp</span>(<span class="kw">determinant</span>(Vphy)<span class="op">$</span>modulus[<span class="dv">1</span>]<span class="op">/</span>n)</a>
-<a class="sourceLine" id="cb5-25" data-line-number="25"></a>
-<a class="sourceLine" id="cb5-26" data-line-number="26">tau &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span>, <span class="dt">nrow =</span> n, <span class="dt">ncol =</span> <span class="dv">1</span>) <span class="op">%*%</span><span class="st"> </span><span class="kw">diag</span>(Vphy) <span class="op">-</span><span class="st"> </span>Vphy</a>
-<a class="sourceLine" id="cb5-27" data-line-number="27">C &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>, <span class="dt">nrow =</span> p <span class="op">*</span><span class="st"> </span>n, <span class="dt">ncol =</span> p <span class="op">*</span><span class="st"> </span>n)</a>
-<a class="sourceLine" id="cb5-28" data-line-number="28"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>p) <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>p) {</a>
-<a class="sourceLine" id="cb5-29" data-line-number="29">  Cd &lt;-<span class="st"> </span>(d[i]<span class="op">^</span>tau <span class="op">*</span><span class="st"> </span>(d[j]<span class="op">^</span><span class="kw">t</span>(tau)) <span class="op">*</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>(d[i] <span class="op">*</span><span class="st"> </span>d[j])<span class="op">^</span>Vphy))<span class="op">/</span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>d[i] <span class="op">*</span><span class="st"> </span>d[j])</a>
-<a class="sourceLine" id="cb5-30" data-line-number="30">  C[(n <span class="op">*</span><span class="st"> </span>(i <span class="op">-</span><span class="st"> </span><span class="dv">1</span>) <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)<span class="op">:</span>(i <span class="op">*</span><span class="st"> </span>n), (n <span class="op">*</span><span class="st"> </span>(j <span class="op">-</span><span class="st"> </span><span class="dv">1</span>) <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)<span class="op">:</span>(j <span class="op">*</span><span class="st"> </span>n)] &lt;-<span class="st"> </span>R[i, j] <span class="op">*</span><span class="st"> </span>Cd</a>
-<a class="sourceLine" id="cb5-31" data-line-number="31">}</a>
-<a class="sourceLine" id="cb5-32" data-line-number="32">MM &lt;-<span class="st"> </span><span class="kw">matrix</span>(M<span class="op">^</span><span class="dv">2</span>, <span class="dt">ncol =</span> <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb5-33" data-line-number="33">V &lt;-<span class="st"> </span>C <span class="op">+</span><span class="st"> </span><span class="kw">diag</span>(<span class="kw">as.numeric</span>(MM))</a>
-<a class="sourceLine" id="cb5-34" data-line-number="34"></a>
-<a class="sourceLine" id="cb5-35" data-line-number="35">iD &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">chol</span>(V))</a>
-<a class="sourceLine" id="cb5-36" data-line-number="36"></a>
-<a class="sourceLine" id="cb5-37" data-line-number="37">XX &lt;-<span class="st"> </span>iD <span class="op">%*%</span><span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>n)</a>
-<a class="sourceLine" id="cb5-38" data-line-number="38">X &lt;-<span class="st"> </span><span class="kw">matrix</span>(XX, n, p)</a>
-<a class="sourceLine" id="cb5-39" data-line-number="39"><span class="kw">colnames</span>(X) &lt;-<span class="st"> </span>trt_names</a>
-<a class="sourceLine" id="cb5-40" data-line-number="40"><span class="kw">rownames</span>(X) &lt;-<span class="st"> </span>phy<span class="op">$</span>tip.label</a>
-<a class="sourceLine" id="cb5-41" data-line-number="41"><span class="kw">rownames</span>(M) &lt;-<span class="st"> </span>phy<span class="op">$</span>tip.label</a>
-<a class="sourceLine" id="cb5-42" data-line-number="42"></a>
-<a class="sourceLine" id="cb5-43" data-line-number="43">U &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">cbind</span>(<span class="kw">rnorm</span>(n, <span class="dt">mean =</span> <span class="dv">2</span>, <span class="dt">sd =</span> <span class="dv">10</span>)))</a>
-<a class="sourceLine" id="cb5-44" data-line-number="44"><span class="kw">names</span>(U) &lt;-<span class="st"> </span>trt_names[<span class="dv">2</span>]</a>
-<a class="sourceLine" id="cb5-45" data-line-number="45"></a>
-<a class="sourceLine" id="cb5-46" data-line-number="46">X[,<span class="dv">2</span>] &lt;-<span class="st"> </span>X[,<span class="dv">2</span>] <span class="op">+</span><span class="st"> </span>B2[<span class="dv">1</span>] <span class="op">*</span><span class="st"> </span>U[[<span class="dv">1</span>]][,<span class="dv">1</span>] <span class="op">-</span><span class="st"> </span>B2[<span class="dv">1</span>] <span class="op">*</span><span class="st"> </span><span class="kw">mean</span>(U[[<span class="dv">1</span>]][,<span class="dv">1</span>])</a>
-<a class="sourceLine" id="cb5-47" data-line-number="47"></a>
-<a class="sourceLine" id="cb5-48" data-line-number="48">z &lt;-<span class="st"> </span><span class="kw">cor_phylo</span>(<span class="dt">variates =</span> X,</a>
-<a class="sourceLine" id="cb5-49" data-line-number="49">               <span class="dt">covariates =</span> U,</a>
-<a class="sourceLine" id="cb5-50" data-line-number="50">               <span class="dt">meas_errors =</span> M,</a>
-<a class="sourceLine" id="cb5-51" data-line-number="51">               <span class="dt">phy =</span> phy,</a>
-<a class="sourceLine" id="cb5-52" data-line-number="52">               <span class="dt">species =</span> phy<span class="op">$</span>tip.label)</a>
-<a class="sourceLine" id="cb5-53" data-line-number="53"></a>
-<a class="sourceLine" id="cb5-54" data-line-number="54"></a>
-<a class="sourceLine" id="cb5-55" data-line-number="55">U2 &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="ot">NULL</span>, <span class="kw">matrix</span>(<span class="kw">rnorm</span>(n, <span class="dt">mean =</span> <span class="dv">2</span>, <span class="dt">sd =</span> <span class="dv">10</span>), <span class="dt">nrow =</span> n, <span class="dt">ncol =</span> <span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb5-56" data-line-number="56"><span class="kw">rownames</span>(U2[[<span class="dv">2</span>]]) &lt;-<span class="st"> </span>phy<span class="op">$</span>tip.label</a>
-<a class="sourceLine" id="cb5-57" data-line-number="57"><span class="kw">colnames</span>(U2[[<span class="dv">2</span>]]) &lt;-<span class="st"> &quot;par2&quot;</span></a>
-<a class="sourceLine" id="cb5-58" data-line-number="58">X2 =<span class="st"> </span>X</a>
-<a class="sourceLine" id="cb5-59" data-line-number="59">X2[,<span class="dv">2</span>] &lt;-<span class="st"> </span>X2[,<span class="dv">2</span>] <span class="op">+</span><span class="st"> </span>B2[<span class="dv">1</span>] <span class="op">*</span><span class="st"> </span>U2[[<span class="dv">2</span>]][,<span class="dv">1</span>] <span class="op">-</span><span class="st"> </span>B2[<span class="dv">1</span>] <span class="op">*</span><span class="st"> </span><span class="kw">mean</span>(U2[[<span class="dv">2</span>]][,<span class="dv">1</span>])</a>
-<a class="sourceLine" id="cb5-60" data-line-number="60"></a>
-<a class="sourceLine" id="cb5-61" data-line-number="61">z_r &lt;-<span class="st"> </span><span class="kw">corphylo</span>(<span class="dt">X =</span> X2, <span class="dt">SeM =</span> M, <span class="dt">U =</span> U2, <span class="dt">phy =</span> phy, <span class="dt">method =</span> <span class="st">&quot;Nelder-Mead&quot;</span>)</a>
-<a class="sourceLine" id="cb5-62" data-line-number="62"></a>
-<a class="sourceLine" id="cb5-63" data-line-number="63">rbenchmark<span class="op">::</span><span class="kw">benchmark</span>(</a>
-<a class="sourceLine" id="cb5-64" data-line-number="64">  <span class="st">&quot;cor_phylo&quot;</span> =<span class="st"> </span>{<span class="kw">cor_phylo</span>(<span class="dt">variates =</span> X, <span class="dt">covariates =</span> U, <span class="dt">meas_errors =</span> M,</a>
-<a class="sourceLine" id="cb5-65" data-line-number="65">                           <span class="dt">phy =</span> phy, <span class="dt">species =</span> phy<span class="op">$</span>tip.label)},</a>
-<a class="sourceLine" id="cb5-66" data-line-number="66">  <span class="st">&quot;corphylo&quot;</span> =<span class="st"> </span>{<span class="kw">corphylo</span>(<span class="dt">X =</span> X2, <span class="dt">SeM =</span> M, <span class="dt">U =</span> U2, <span class="dt">phy =</span> phy, <span class="dt">method =</span> <span class="st">&quot;Nelder-Mead&quot;</span>)},</a>
-<a class="sourceLine" id="cb5-67" data-line-number="67">  <span class="dt">replications =</span> <span class="dv">5</span>,</a>
-<a class="sourceLine" id="cb5-68" data-line-number="68">  <span class="dt">columns =</span> <span class="kw">c</span>(<span class="st">&quot;test&quot;</span>, <span class="st">&quot;replications&quot;</span>, <span class="st">&quot;elapsed&quot;</span>,</a>
-<a class="sourceLine" id="cb5-69" data-line-number="69">              <span class="st">&quot;relative&quot;</span>, <span class="st">&quot;user.self&quot;</span>, <span class="st">&quot;sys.self&quot;</span>)</a>
-<a class="sourceLine" id="cb5-70" data-line-number="70">)</a>
-<a class="sourceLine" id="cb5-71" data-line-number="71"><span class="co">#&gt;        test replications elapsed relative user.self sys.self</span></a>
-<a class="sourceLine" id="cb5-72" data-line-number="72"><span class="co">#&gt; 1 cor_phylo            5   4.511    1.000     4.329    0.062</span></a>
-<a class="sourceLine" id="cb5-73" data-line-number="73"><span class="co">#&gt; 2  corphylo            5  16.190    3.589    13.863    1.369</span></a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ape)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up parameter values for simulating data</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>phy <span class="ot">&lt;-</span> <span class="fu">rcoal</span>(n, <span class="at">tip.label =</span> <span class="dv">1</span><span class="sc">:</span>n)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>trt_names <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;par&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>R <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="dv">1</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.3</span>, <span class="fl">0.95</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>B2 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>Se <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="dv">1</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>M <span class="ot">&lt;-</span> <span class="fu">matrix</span>(Se, <span class="at">nrow =</span> n, <span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(M) <span class="ot">&lt;-</span> trt_names</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up needed matrices for the simulations</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">length</span>(d)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>star <span class="ot">&lt;-</span> <span class="fu">stree</span>(n)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>star<span class="sc">$</span>edge.length <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">1</span>, <span class="at">dim =</span> <span class="fu">c</span>(n, <span class="dv">1</span>))</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>star<span class="sc">$</span>tip.label <span class="ot">&lt;-</span> phy<span class="sc">$</span>tip.label</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>Vphy <span class="ot">&lt;-</span> <span class="fu">vcv</span>(phy)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>Vphy <span class="ot">&lt;-</span> Vphy<span class="sc">/</span><span class="fu">max</span>(Vphy)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>Vphy <span class="ot">&lt;-</span> Vphy<span class="sc">/</span><span class="fu">exp</span>(<span class="fu">determinant</span>(Vphy)<span class="sc">$</span>modulus[<span class="dv">1</span>]<span class="sc">/</span>n)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>tau <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span>, <span class="at">nrow =</span> n, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">%*%</span> <span class="fu">diag</span>(Vphy) <span class="sc">-</span> Vphy</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> p <span class="sc">*</span> n, <span class="at">ncol =</span> p <span class="sc">*</span> n)</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p) <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p) {</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  Cd <span class="ot">&lt;-</span> (d[i]<span class="sc">^</span>tau <span class="sc">*</span> (d[j]<span class="sc">^</span><span class="fu">t</span>(tau)) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> (d[i] <span class="sc">*</span> d[j])<span class="sc">^</span>Vphy))<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">-</span> d[i] <span class="sc">*</span> d[j])</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  C[(n <span class="sc">*</span> (i <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">:</span>(i <span class="sc">*</span> n), (n <span class="sc">*</span> (j <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">:</span>(j <span class="sc">*</span> n)] <span class="ot">&lt;-</span> R[i, j] <span class="sc">*</span> Cd</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>MM <span class="ot">&lt;-</span> <span class="fu">matrix</span>(M<span class="sc">^</span><span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">1</span>)</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>V <span class="ot">&lt;-</span> C <span class="sc">+</span> <span class="fu">diag</span>(<span class="fu">as.numeric</span>(MM))</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>iD <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">chol</span>(V))</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>XX <span class="ot">&lt;-</span> iD <span class="sc">%*%</span> <span class="fu">rnorm</span>(<span class="dv">2</span> <span class="sc">*</span> n)</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(XX, n, p)</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(X) <span class="ot">&lt;-</span> trt_names</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(X) <span class="ot">&lt;-</span> phy<span class="sc">$</span>tip.label</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(M) <span class="ot">&lt;-</span> phy<span class="sc">$</span>tip.label</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>U <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">cbind</span>(<span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="dv">10</span>)))</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(U) <span class="ot">&lt;-</span> trt_names[<span class="dv">2</span>]</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>X[,<span class="dv">2</span>] <span class="ot">&lt;-</span> X[,<span class="dv">2</span>] <span class="sc">+</span> B2[<span class="dv">1</span>] <span class="sc">*</span> U[[<span class="dv">1</span>]][,<span class="dv">1</span>] <span class="sc">-</span> B2[<span class="dv">1</span>] <span class="sc">*</span> <span class="fu">mean</span>(U[[<span class="dv">1</span>]][,<span class="dv">1</span>])</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">cor_phylo</span>(<span class="at">variates =</span> X,</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>               <span class="at">covariates =</span> U,</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>               <span class="at">meas_errors =</span> M,</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>               <span class="at">phy =</span> phy,</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>               <span class="at">species =</span> phy<span class="sc">$</span>tip.label)</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>U2 <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, <span class="fu">matrix</span>(<span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="dv">10</span>), <span class="at">nrow =</span> n, <span class="at">ncol =</span> <span class="dv">1</span>))</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(U2[[<span class="dv">2</span>]]) <span class="ot">&lt;-</span> phy<span class="sc">$</span>tip.label</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(U2[[<span class="dv">2</span>]]) <span class="ot">&lt;-</span> <span class="st">&quot;par2&quot;</span></span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>X2 <span class="ot">=</span> X</span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>X2[,<span class="dv">2</span>] <span class="ot">&lt;-</span> X2[,<span class="dv">2</span>] <span class="sc">+</span> B2[<span class="dv">1</span>] <span class="sc">*</span> U2[[<span class="dv">2</span>]][,<span class="dv">1</span>] <span class="sc">-</span> B2[<span class="dv">1</span>] <span class="sc">*</span> <span class="fu">mean</span>(U2[[<span class="dv">2</span>]][,<span class="dv">1</span>])</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>z_r <span class="ot">&lt;-</span> <span class="fu">corphylo</span>(<span class="at">X =</span> X2, <span class="at">SeM =</span> M, <span class="at">U =</span> U2, <span class="at">phy =</span> phy, <span class="at">method =</span> <span class="st">&quot;Nelder-Mead&quot;</span>)</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>rbenchmark<span class="sc">::</span><span class="fu">benchmark</span>(</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;cor_phylo&quot;</span> <span class="ot">=</span> {<span class="fu">cor_phylo</span>(<span class="at">variates =</span> X, <span class="at">covariates =</span> U, <span class="at">meas_errors =</span> M,</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>                           <span class="at">phy =</span> phy, <span class="at">species =</span> phy<span class="sc">$</span>tip.label)},</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;corphylo&quot;</span> <span class="ot">=</span> {<span class="fu">corphylo</span>(<span class="at">X =</span> X2, <span class="at">SeM =</span> M, <span class="at">U =</span> U2, <span class="at">phy =</span> phy, <span class="at">method =</span> <span class="st">&quot;Nelder-Mead&quot;</span>)},</span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">replications =</span> <span class="dv">5</span>,</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">&quot;test&quot;</span>, <span class="st">&quot;replications&quot;</span>, <span class="st">&quot;elapsed&quot;</span>,</span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;relative&quot;</span>, <span class="st">&quot;user.self&quot;</span>, <span class="st">&quot;sys.self&quot;</span>)</span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        test replications elapsed relative user.self sys.self</span></span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 cor_phylo            5   4.511    1.000     4.329    0.062</span></span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  corphylo            5  16.190    3.589    13.863    1.369</span></span></code></pre></div>
 </div>
 
 
